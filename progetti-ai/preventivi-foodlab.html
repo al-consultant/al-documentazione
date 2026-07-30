@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vademecum - Preventivi AI - Food Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="wrap">
+  <aside class="side">
+    <div>
+      <div class="brandmark">Vade<span>mecum</span></div>
+      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:'IBM Plex Mono',monospace"><a href="index.html" style="text-decoration:none;color:inherit">&larr; tutti i progetti</a></div>
+    </div>
+    <div>
+      <div class="kicker">Sezioni</div>
+      <nav class="toc" id="toc">
+        <a href="#intro" class="active"><span class="n">01</span> In una frase</a>
+        <a href="#stack"><span class="n">02</span> Stack e strumenti</a>
+        <a href="#flusso"><span class="n">03</span> Come funziona</a>
+        <a href="#onboarding"><span class="n">04</span> Onboarding + cliente</a>
+        <a href="#paletti"><span class="n">05</span> Paletti e stato</a>
+      </nav>
+    </div>
+    <div class="foot">
+      <b>Preventivi AI - Food Lab</b><br>
+      Ultimo aggiornamento: 30 lug 2026<br>
+      Owner: Tomas &middot; Fonte: repo PREVENTIVI AI/Food Lab Experience
+    </div>
+  </aside>
+  <main>
+    <header class="hero" id="top">
+      <div class="eyebrow">Vademecum &middot; Onboarding collaboratori</div>
+      <h1>Preventivi AI<br>Food Lab</h1>
+      <p class="lede">Deck e preventivi con prezzi per le proposte ai clienti. Il caso Food Lab Experience: una proposta con formula ibrida di pricing, presentata come pagina sfogliabile.</p>
+      <div class="chips">
+        <span class="chip state"><span class="dot"></span>Stato: <b>in uso</b></span>
+        <span class="chip"><span class="dot"></span>Tipo: <b>deck/preventivo</b></span>
+        <span class="chip"><span class="dot"></span>Formato: <b>HTML</b></span>
+        <span class="chip"><span class="dot"></span>Prezzi: <b>inclusi</b></span>
+      </div>
+    </header>
+
+    <section id="intro">
+      <div class="sechead"><span class="secnum">01</span><div><h2>In una frase, e a chi serve</h2><div class="sub">Orientarsi in 30 secondi.</div></div></div>
+      <div class="grid2">
+        <div>
+          <p><b>Cos&rsquo;è.</b> Proposte commerciali (deck/preventivo) costruite come pagina HTML da presentare al cliente. Il primo caso è Food Lab Experience, con prezzi e formula ibrida.</p>
+          <p><b>Il problema che risolve.</b> Un preventivo in PDF piatto convince poco. Qui la proposta è una pagina curata che racconta valore e prezzo insieme.</p>
+          <p><b>Perché è fatto così.</b> HTML sfogliabile = controllo pieno sulla presentazione, si manda con un link e si aggiorna in fretta.</p>
+        </div>
+        <div class="callout">
+          <div class="lbl">A chi serve</div>
+          <ul>
+            <li><b>Tomas</b>Presenta al cliente una proposta che vende, non un semplice foglio prezzi.</li>
+            <li><b>Collaboratore</b>Duplica il formato per un nuovo preventivo cambiando contenuti e cifre.</li>
+            <li><b>Cliente</b>Legge una proposta chiara: cosa riceve e quanto costa.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section id="stack">
+      <div class="sechead"><span class="secnum">02</span><div><h2>Stack e strumenti</h2><div class="sub">Con cosa è costruito, e perché.</div></div></div>
+      <table class="tbl">
+        <thead><tr><th>Strumento</th><th>Ruolo nel progetto</th><th>Perché scelto</th></tr></thead>
+        <tbody>
+          <tr><td>HTML/CSS <span class="tag">formato</span></td><td>La proposta come pagina sfogliabile.</td><td>Controllo totale, condivisibile con un link.</td></tr>
+          <tr><td>Script Proposta (.rtf) <span class="tag n">fonte</span></td><td>Il testo e l&rsquo;argomentario della proposta.</td><td>Base del contenuto.</td></tr>
+          <tr><td>Formula pricing <span class="tag n">modello</span></td><td>Ibrida: fisso + mensile + percentuali.</td><td>Decisa insieme al cliente.</td></tr>
+        </tbody>
+      </table>
+      <h3>Formula Food Lab</h3>
+      <table class="tbl">
+        <thead><tr><th>Voce</th><th>Valore</th></tr></thead>
+        <tbody>
+          <tr><td>Setup iniziale</td><td>1.200 &euro;</td></tr>
+          <tr><td>Canone mensile</td><td>790 &euro;/mese</td></tr>
+          <tr><td>Quota su risultati</td><td>10%</td></tr>
+          <tr><td>Quota aggiuntiva</td><td>8%</td></tr>
+        </tbody>
+      </table>
+      <div class="note">Il dettaglio esatto delle voci percentuali e nel deck: qui la formula e riassunta.</div>
+    </section>
+    <section id="flusso">
+      <div class="sechead"><span class="secnum">03</span><div><h2>Come funziona - il flusso</h2><div class="sub">Il pattern del progetto, passo per passo.</div></div></div>
+      <p class="muted">Da brief del cliente a proposta presentata.</p>
+      <div class="flow">
+        <div class="step"><div class="sn">01</div><h4>Brief</h4><p>Cosa vuole il cliente, budget e obiettivi.</p><span class="cmd">brief</span></div>
+        <div class="step"><div class="sn">02</div><h4>Bozza</h4><p>Claude aiuta a strutturare proposta e testi.</p><span class="cmd">claude</span></div>
+        <div class="step"><div class="sn">03</div><h4>Prezzi</h4><p>Applica la formula ibrida concordata.</p><span class="cmd">pricing</span></div>
+        <div class="step"><div class="sn">04</div><h4>Deck</h4><p>Impagina in HTML sfogliabile.</p><span class="cmd">index.html</span></div>
+        <div class="step manual"><div class="sn">05</div><h4>Presenta</h4><p>Invii il link e presenti al cliente.</p><span class="cmd">manuale</span></div>
+      </div>
+      <div class="note"><b>Regola chiave.</b> I prezzi si decidono con il cliente: qui è documentato il caso Food Lab, non un listino fisso.</div>
+      <h3>Dove finiscono le cose</h3>
+      <table class="tbl">
+        <thead><tr><th>File</th><th>Contenuto</th></tr></thead>
+        <tbody>
+          <tr><td><code>Food Lab Experience/index.html</code></td><td>Il deck sfogliabile.</td></tr>
+          <tr><td><code>Food Lab Experience/Script Proposta ....rtf</code></td><td>Il testo della proposta.</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section id="onboarding">
+      <div class="sechead"><span class="secnum">04</span><div><h2>Onboarding collaboratore + spiegazione cliente</h2><div class="sub">Allineare chi arriva, e raccontarlo a chi non è tecnico.</div></div></div>
+      <div class="cards">
+        <div class="ocard">
+          <div class="lbl">Collaboratore - primi passi</div>
+          <h4>Da zero a produttivo</h4>
+          <ol>
+            <li>Apri <code>Food Lab Experience/index.html</code> per vedere il formato.</li>
+            <li>Leggi lo Script Proposta per capire l&rsquo;argomentario.</li>
+            <li>Duplica la cartella per un nuovo preventivo.</li>
+            <li>Cambia testi e cifre, poi manda il link.</li>
+          </ol>
+        </div>
+        <div class="ocard">
+          <div class="lbl">Collaboratore - cosa deve saper fare</div>
+          <h4>Le competenze minime</h4>
+          <p>HTML/CSS di base per adattare il deck e chiarezza sui numeri della formula. Il testo si costruisce con Claude.</p>
+          <p style="margin-top:10px"><b>Regola d'oro:</b> mai numeri inventati: le cifre di un preventivo vanno confermate col cliente prima di mandarle.</p>
+        </div>
+      </div>
+      <div class="pitch">
+        <div class="lbl">Come lo spieghi al cliente (non tecnico)</div>
+        <p>&laquo;La tua proposta non è un foglio prezzi: è una pagina che racconta cosa ottieni e quanto costa, chiara e sfogliabile.&raquo;</p>
+        <p>La formula è su misura: una parte fissa, un canone e una quota sui risultati.</p>
+      </div>
+      <div class="warn">
+        <div class="lbl">Paletti da spiegare subito</div>
+        <ul>
+          <li><b>Prezzi da confermare</b> col cliente prima dell&rsquo;invio.</li>
+          <li><b>La formula è specifica</b> di Food Lab, non un listino generale.</li>
+          <li><b>Il deck è una proposta,</b> non un contratto.</li>
+        </ul>
+      </div>
+    </section>
+    <section id="paletti">
+      <div class="sechead"><span class="secnum">05</span><div><h2>Paletti, limiti e stato</h2><div class="sub">Cosa è vero oggi, cosa manca.</div></div></div>
+      <div class="grid2">
+        <div>
+          <h3>Da fare più avanti</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td>Template</td><td>Rendere il deck riusabile per altri clienti.</td></tr>
+          <tr><td>Generatore</td><td>Da brief a bozza di deck con Claude.</td></tr>
+        </tbody>
+      </table>
+        </div>
+        <div class="callout">
+          <div class="lbl">Stato reale (onesto)</div>
+          <div class="kv">
+            <div class="row"><span class="k">Tipo</span><span class="v">Deck/preventivo</span></div>
+            <div class="row"><span class="k">Caso</span><span class="v">Food Lab Experience</span></div>
+            <div class="row"><span class="k">Formula</span><span class="v">1.200 + 790/mese + 10% + 8%</span></div>
+            <div class="row"><span class="k">Prezzi</span><span class="v">Nel deck</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="pgfoot">
+      <span>Vademecum &middot; Preventivi AI - Food Lab</span>
+      <span class="mono">v1.0 &middot; 2026-07-30</span>
+    </footer>
+  </main>
+</div>
+<script>
+  const links=[...document.querySelectorAll("#toc a")];
+  const map=new Map(links.map(a=>[a.getAttribute("href").slice(1),a]));
+  const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove("active"));map.get(e.target.id)&&map.get(e.target.id).classList.add("active");}});},{rootMargin:"-45% 0px -50% 0px"});
+  document.querySelectorAll("section,#intro").forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

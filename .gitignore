@@ -1,1 +1,10 @@
 .DS_Store
+
+# Pagine servizi in CHIARO: non devono mai finire sul repo pubblico.
+# In root ci va solo la versione cifrata da staticrypt.
+_sorgenti-servizi/
+
+# Config/salt di staticrypt e cartella di default: non servono nel repo.
+.staticrypt.json
+encrypted/
+decrypted/

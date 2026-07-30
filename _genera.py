@@ -2,19 +2,29 @@
 # -*- coding: utf-8 -*-
 """
 Generatore vademecum PROGETTI AI.
-Legge il CSS dal file gia approvato (architettura-strumenti.html) cosi il look
-resta identico ovunque, poi scrive un HTML per ogni progetto + l'index hub.
+Il look sta tutto in assets/styles.css (fonte unica): ogni pagina lo linka,
+niente piu' CSS duplicato. Scrive la home in root, i dossier in progetti-ai/,
+le pagine servizi (in chiaro) in _sorgenti-servizi/ da cifrare.
 Rilancia con:  python3 _genera.py
 """
 import re
 import pathlib
 
 BASE = pathlib.Path(__file__).parent
-TEMPLATE = BASE / "architettura-strumenti.html"
+# Cartelle del repo:
+#  - progetti-ai/       dossier Progetti AI (in chiaro, pubblici)
+#  - _sorgenti-servizi/ pagine servizi in chiaro, GITIGNORED, da cifrare
+#  - assets/            styles.css condiviso
+PROG = BASE / "progetti-ai"
+SRC_PROT = BASE / "_sorgenti-servizi"
+ASSETS = BASE / "assets"
+for _d in (PROG, SRC_PROT, ASSETS):
+    _d.mkdir(exist_ok=True)
 
-# --- 1. CSS dal file approvato (fonte unica del look) ---
-src = TEMPLATE.read_text(encoding="utf-8")
-CSS = re.search(r"<style>.*?</style>", src, re.S).group(0)
+
+def stylesheet(prefix=""):
+    # prefix="" per la home in root, "../" per le pagine dentro una cartella.
+    return '<link rel="stylesheet" href="' + prefix + 'assets/styles.css">\n'
 
 # --- 2. sezioni fisse ---
 SECHEADS = {
@@ -131,7 +141,7 @@ def page(p):
     s.append('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
     s.append("<title>Vademecum - " + p["name"] + "</title>\n")
     s.append(FONTS)
-    s.append(CSS + '\n</head>\n<body>\n<div class="wrap">\n')
+    s.append(stylesheet("../") + '</head>\n<body>\n<div class="wrap">\n')
     s.append('  <aside class="side">\n    <div>\n      <div class="brandmark">Vade<span>mecum</span></div>\n')
     s.append('      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:\'IBM Plex Mono\',monospace"><a href="index.html" style="text-decoration:none;color:inherit">&larr; tutti i progetti</a></div>\n    </div>\n')
     s.append('    <div>\n      <div class="kicker">Sezioni</div>\n      <nav class="toc" id="toc">\n        ' + NAV + "\n      </nav>\n    </div>\n")
@@ -497,13 +507,18 @@ P.append(dict(
     }))
 
 # ---- scrivi i file ----
+# Un dossier con p["protected"]=True (es. un servizio AL) va in _sorgenti-servizi/
+# e verra cifrato; gli altri in progetti-ai/, in chiaro.
 for p in P:
-    (BASE / (p["slug"] + ".html")).write_text(fix(page(p)), encoding="utf-8")
-    print("scritto", p["slug"] + ".html")
+    dest = SRC_PROT if p.get("protected") else PROG
+    (dest / (p["slug"] + ".html")).write_text(fix(page(p)), encoding="utf-8")
+    print("scritto", ("_sorgenti-servizi/" if p.get("protected") else "progetti-ai/") + p["slug"] + ".html")
 
 # ---- HUB A DUE LIVELLI ----
 # Home = 2 card categoria. Ogni categoria ha una pagina sua con i suoi dossier.
-# Categoria: (nome, slug, descrizione, [progetti]). Lista vuota = "in arrivo".
+# Categoria: (nome, slug, descrizione, [progetti], protected).
+#   protected=True -> pagina + dossier vanno in _sorgenti-servizi/ e poi cifrati.
+# Lista vuota = "in arrivo".
 CATS = [
     ("Progetti AI", "progetti-ai", "Gli strumenti e le automazioni AI: motore comune, tool interni e lavori per i clienti.", [
         ("architettura-strumenti.html", "Architettura strumenti", "Come si incastrano tutti gli strumenti AI: motore, principi, cartelle.", "meta"),
@@ -513,50 +528,14 @@ CATS = [
         ("configuratore-vernici.html", "Configuratore Vernici", "Dal linguaggio naturale a un carrello di prodotti, col perche.", "demo"),
         ("siti-web-evolution.html", "Siti Web Evolution", "Landing per clienti da un motore di temi, mobile-first.", "in uso"),
         ("storytelling-altra-parte.html", "Storytelling - l'altra parte", "Sito e blog l'altra parte per AL, con build da script.", "in uso"),
-    ]),
-    ("Servizi AL Consultant", "servizi-al-consultant", "I servizi dedicati ad A.L. Consultant. Prima area in preparazione.", []),
+    ], False),
+    ("Servizi AL Consultant", "servizi-al-consultant", "I servizi dedicati ad A.L. Consultant. Prima area in preparazione.", [], True),
 ]
 
-EXTRA = """<style>
-    main.hub{padding:0 clamp(28px,5vw,72px) 120px;max-width:1100px;margin:0 auto}
-    .hubhero{padding:72px 0 34px;border-bottom:2px solid var(--ink)}
-    .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:40px}
-    .pcard{display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 24px;transition:.16s;position:relative}
-    .pcard:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.07)}
-    .pcard-top{display:flex;justify-content:space-between;align-items:center}
-    .pchip{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;padding:4px 9px;border:1px solid var(--line);border-radius:100px;color:var(--ink-2);display:inline-flex;gap:6px;align-items:center;text-transform:uppercase;letter-spacing:.04em}
-    .pchip .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
-    .pchip.state .dot{background:var(--ok)}
-    .pcard .arrow{font-size:18px;color:var(--ink-3);transition:.16s}
-    .pcard:hover .arrow{color:var(--accent);transform:translateX(3px)}
-    .pcard h3{font-family:"Montserrat",sans-serif;font-weight:800;font-size:20px;letter-spacing:-.01em;margin:0}
-    .pcard h3::before{display:none}
-    .pcard p{font-size:13.5px;color:var(--ink-2);margin:0;text-wrap:pretty}
-    .hubfoot{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-    .homegrid{display:flex;flex-direction:column;gap:24px;margin-top:44px}
-    .homecard{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:38px 40px 34px;transition:.16s;min-height:340px}
-    .homecard:hover{border-color:var(--ink);transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.08)}
-    .homecard-top{display:flex;justify-content:space-between;align-items:center}
-    .homecard h2{font-family:"Montserrat",sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em;margin:20px 0 0}
-    .homecard h2::before{display:none}
-    .homecard .cdesc{color:var(--ink-2);font-size:15px;margin:10px 0 0;max-width:60ch;text-wrap:pretty}
-    .homecard .arrow{font-size:22px;color:var(--ink-3);transition:.16s}
-    .homecard:hover .arrow{color:var(--accent);transform:translateX(4px)}
-    .preview{margin-top:auto;padding-top:28px;display:flex;flex-wrap:wrap;gap:10px}
-    .preview .pill{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-2);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px 13px;white-space:nowrap}
-    .preview .empty{color:var(--ink-3);border-style:dashed}
-    .backlink{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);text-decoration:none;display:inline-block;margin-bottom:18px}
-    .backlink:hover{color:var(--accent)}
-    .pcard.empty{border-style:dashed;background:transparent;cursor:default;gap:12px;justify-content:center;min-height:118px}
-    .pcard.empty:hover{transform:none;box-shadow:none;border-color:var(--line)}
-    .pcard.empty p{color:var(--ink-3);text-wrap:pretty}
-  </style>"""
-
-
-def _head(title):
+def _head(title, prefix=""):
     return ('<!doctype html>\n<html lang="it">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-            "<title>" + title + "</title>\n" + FONTS + CSS + "\n" + EXTRA + "\n</head>\n<body>\n")
+            "<title>" + title + "</title>\n" + FONTS + stylesheet(prefix) + "</head>\n<body>\n")
 
 
 def _cat_cards(items):
@@ -576,28 +555,29 @@ def _cat_cards(items):
 
 def home_page():
     cards = ""
-    for name, slug, desc, items in CATS:
+    for name, slug, desc, items, prot in CATS:
         count = (str(len(items)) + " progetti") if items else "in arrivo"
         if items:
             pills = "".join('<span class="pill">' + n + "</span>" for _, n, _, _ in items)
         else:
             pills = '<span class="pill empty">in preparazione</span>'
-        cards += ('      <a class="homecard" href="' + slug + '.html">\n'
-                  '        <div class="homecard-top"><span class="pchip"><span class="dot"></span>' + count + '</span><span class="arrow">&rarr;</span></div>\n'
+        lock = '<span class="pchip lock"><span class="dot"></span>riservata</span>' if prot else ""
+        cards += ('      <a class="homecard" href="' + slug + '/index.html">\n'
+                  '        <div class="homecard-top"><span class="tags">' + lock + '<span class="pchip"><span class="dot"></span>' + count + '</span></span><span class="arrow">&rarr;</span></div>\n'
                   "        <h2>" + name + '</h2>\n        <p class="cdesc">' + desc + '</p>\n'
                   '        <div class="preview">' + pills + "</div>\n      </a>\n")
     s = [_head("Documentazione progetti - PROGETTI AI")]
     s.append('  <main class="hub">\n    <header class="hubhero">\n      <div class="eyebrow">Vademecum &middot; Documentazione interna</div>\n')
     s.append('      <h1>Documentazione progetti</h1>\n      <p class="lede">Ogni progetto in un dossier: cosa e, com&rsquo;e fatto, come funziona e come spiegarlo a chi arriva. Scegli l&rsquo;area.</p>\n    </header>\n')
     s.append('      <div class="homegrid">\n' + cards + "      </div>\n")
-    tot = sum(len(i) for _, _, _, i in CATS)
+    tot = sum(len(c[3]) for c in CATS)
     s.append('    <div class="hubfoot"><span>PROGETTI AI &middot; documentazione onboarding</span><span class="mono">' + str(tot) + " progetti &middot; 2026-07-30</span></div>\n  </main>\n</body>\n</html>\n")
     return "".join(s)
 
 
 def subpage(name, slug, desc, items):
-    s = [_head("Documentazione - " + name)]
-    s.append('  <main class="hub">\n    <header class="hubhero">\n      <a class="backlink" href="index.html">&larr; Documentazione progetti</a>\n      <div class="eyebrow">Vademecum &middot; ' + name + '</div>\n')
+    s = [_head("Documentazione - " + name, "../")]
+    s.append('  <main class="hub">\n    <header class="hubhero">\n      <a class="backlink" href="../index.html">&larr; Documentazione progetti</a>\n      <div class="eyebrow">Vademecum &middot; ' + name + '</div>\n')
     s.append("      <h1>" + name + '</h1>\n      <p class="lede">' + desc + "</p>\n    </header>\n")
     s.append('      <div class="pgrid">\n' + _cat_cards(items) + "      </div>\n")
     s.append('    <div class="hubfoot"><span>PROGETTI AI &middot; ' + name + '</span><span class="mono">' + str(len(items)) + " progetti &middot; 2026-07-30</span></div>\n  </main>\n</body>\n</html>\n")
@@ -606,6 +586,9 @@ def subpage(name, slug, desc, items):
 
 (BASE / "index.html").write_text(fix(home_page()), encoding="utf-8")
 print("scritto index.html (home) con", len(CATS), "categorie")
-for name, slug, desc, items in CATS:
-    (BASE / (slug + ".html")).write_text(fix(subpage(name, slug, desc, items)), encoding="utf-8")
-    print("scritto", slug + ".html con", len(items), "progetti")
+# L'elenco di ogni categoria e' l'index.html dentro la sua cartella.
+for name, slug, desc, items, prot in CATS:
+    dest = SRC_PROT if prot else PROG
+    (dest / "index.html").write_text(fix(subpage(name, slug, desc, items)), encoding="utf-8")
+    dove = "_sorgenti-servizi (da cifrare)" if prot else slug + "/"
+    print("scritto", dove + "index.html -", len(items), "progetti")
