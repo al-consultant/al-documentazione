@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vademecum - Preventivi AI - Food Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f1ea;
+    --paper-2:#ebe6db;
+    --ink:#16130f;
+    --ink-2:#4a443b;
+    --ink-3:#7d766a;
+    --line:#d8d1c2;
+    --accent:#b4331f;      /* rosso mattone - un ruolo: marcatori, numeri sezione, stato */
+    --accent-soft:#f0dcd6;
+    --ok:#3f6b3f;
+    --card:#fbf9f4;
+    --radius:4px;
+    --maxw:1200px;
+    font-synthesis:none;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Montserrat",system-ui,sans-serif;
+    font-size:15px;line-height:1.6;
+    text-rendering:optimizeLegibility;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,.025) 1px, transparent 0);
+    background-size:22px 22px;
+  }
+  a{color:inherit}
+  code,.mono{font-family:"IBM Plex Mono",monospace}
+
+  /* ---------- shell: sidebar + main ---------- */
+  .wrap{display:grid;grid-template-columns:248px 1fr;max-width:var(--maxw);margin:0 auto;gap:0}
+  .side{
+    position:sticky;top:0;align-self:start;height:100vh;
+    border-right:1px solid var(--line);
+    padding:34px 26px 34px 30px;
+    display:flex;flex-direction:column;gap:26px;
+    background:linear-gradient(180deg,var(--paper) 0%, var(--paper) 100%);
+  }
+  .brandmark{font-family:"Montserrat",sans-serif;font-weight:900;font-size:20px;line-height:1.05;letter-spacing:-.01em}
+  .brandmark span{color:var(--accent)}
+  .side .kicker{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+  nav.toc{display:flex;flex-direction:column;gap:2px}
+  nav.toc a{
+    display:flex;gap:10px;align-items:baseline;
+    text-decoration:none;color:var(--ink-2);
+    padding:7px 9px;border-radius:var(--radius);font-size:13.5px;font-weight:500;
+    border:1px solid transparent;transition:.15s;
+  }
+  nav.toc a .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600;min-width:16px}
+  nav.toc a:hover{background:var(--paper-2);border-color:var(--line)}
+  nav.toc a.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  nav.toc a.active .n{color:var(--paper)}
+  .side .foot{margin-top:auto;font-size:11px;color:var(--ink-3);line-height:1.5;border-top:1px solid var(--line);padding-top:16px}
+  .side .foot b{color:var(--ink-2);font-weight:600}
+
+  main{padding:0 clamp(28px,5vw,72px) 120px;min-width:0}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:52px 0 30px;border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Montserrat",sans-serif;font-weight:900;font-size:clamp(38px,6vw,62px);line-height:.98;letter-spacing:-.02em;margin:14px 0 16px;text-wrap:balance}
+  .lede{font-size:18px;color:var(--ink-2);max-width:60ch;text-wrap:pretty}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .chip{
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:500;
+    padding:5px 10px;border:1px solid var(--line);border-radius:100px;background:var(--card);color:var(--ink-2);
+    display:inline-flex;gap:7px;align-items:center;
+  }
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .chip.state .dot{background:var(--ok)}
+  .chip b{color:var(--ink);font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  .sechead{display:flex;align-items:baseline;gap:14px;margin-bottom:22px}
+  .secnum{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent);font-weight:600;padding-top:6px}
+  h2{font-family:"Montserrat",sans-serif;font-weight:600;font-size:clamp(24px,3.4vw,34px);line-height:1.05;letter-spacing:-.01em}
+  h2 + .sub{color:var(--ink-3);font-size:13.5px;margin-top:4px}
+  h3{font-family:"Montserrat";font-weight:700;font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink);margin:26px 0 12px;display:flex;align-items:center;gap:9px}
+  h3::before{content:"";width:16px;height:2px;background:var(--accent)}
+  p{max-width:66ch;text-wrap:pretty;margin-bottom:12px}
+  .muted{color:var(--ink-2)}
+  li,td,.step p,.ocard p,.warn li,.note{text-wrap:pretty}
+
+  /* two-col intro */
+  .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:26px;align-items:start}
+  .callout{
+    background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:var(--radius);padding:18px 20px;
+  }
+  .callout .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+  .callout ul{list-style:none;display:flex;flex-direction:column}
+  .callout li{font-size:13px;color:var(--ink-2);padding:11px 0;border-bottom:1px solid var(--line);text-wrap:pretty}
+  .callout li:first-child{padding-top:0}
+  .callout li:last-child{border-bottom:none;padding-bottom:0}
+  .callout li b{display:block;color:var(--ink);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+  /* key/value allineato (stato reale) */
+  .kv{display:flex;flex-direction:column}
+  .kv .row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .kv .row:first-child{padding-top:0}
+  .kv .row:last-child{border-bottom:none;padding-bottom:0}
+  .kv .k{color:var(--ink-2)}
+  .kv .v{font-weight:700;color:var(--ink);text-align:right;text-wrap:pretty}
+
+  /* table (Football Manager density) */
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}
+  .tbl th{
+    text-align:left;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:600;padding:9px 12px;border-bottom:1.5px solid var(--ink)
+  }
+  .tbl td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .tbl tr:hover td{background:var(--card)}
+  .tbl td:first-child{font-weight:600;white-space:nowrap}
+  .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 7px;border-radius:3px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .tag.n{background:var(--paper-2);color:var(--ink-2)}
+
+  /* flow */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:10px 0 4px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+  .step{padding:16px 14px;border-right:1px solid var(--line);position:relative;display:flex;flex-direction:column}
+  .step:last-child{border-right:none}
+  .step .sn{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600}
+  .step h4{font-family:"Montserrat",sans-serif;font-weight:700;font-size:16px;margin:6px 0 6px;letter-spacing:-.01em}
+  .step p{font-size:12px;color:var(--ink-2);margin:0;max-width:none;text-wrap:pretty}
+  .step .cmd{margin-top:auto;font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--ink);color:var(--paper);padding:4px 8px;border-radius:3px;align-self:flex-start;margin-top:14px}
+  .flow .step .cmd{margin-top:auto}
+  .step.manual{background:var(--accent-soft)}
+  .step.manual .sn{color:var(--accent)}
+
+  .note{font-size:12.5px;color:var(--ink-3);margin-top:12px;padding-left:14px;border-left:2px solid var(--line)}
+
+  /* onboarding cards */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .ocard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .ocard .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px}
+  .ocard h4{font-family:"Montserrat",sans-serif;font-weight:600;font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
+  .ocard ol{margin:8px 0 0 18px;font-size:13px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+  .ocard p{font-size:13px;color:var(--ink-2);max-width:none}
+
+  .pitch{background:var(--ink);color:var(--paper);border-radius:var(--radius);padding:24px 26px;margin-top:20px}
+  .pitch .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#e0a99e;font-weight:600;margin-bottom:10px}
+  .pitch p{color:#e8e3d8;font-size:16px;max-width:70ch;font-family:"Montserrat",sans-serif;font-weight:400;line-height:1.5}
+  .pitch p + p{margin-top:10px}
+
+  .warn{background:var(--accent-soft);border:1px solid #e2b8ae;border-radius:var(--radius);padding:16px 18px;margin-top:16px}
+  .warn .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px}
+  .warn ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .warn li{font-size:13px;display:flex;gap:9px;color:var(--ink-2)}
+  .warn li b{color:var(--ink)}
+  .warn li::before{content:"!";font-family:"IBM Plex Mono",monospace;color:var(--accent);font-weight:700}
+
+  footer.pgfoot{padding:32px 0 0;color:var(--ink-3);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .draftflag{position:fixed;bottom:16px;right:16px;background:var(--accent);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;padding:7px 12px;border-radius:100px;letter-spacing:.06em;box-shadow:0 4px 14px rgba(0,0,0,.18);z-index:50}
+
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr}
+    .side{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px;padding:18px 22px}
+    .side .kicker,.side .foot{display:none}
+    nav.toc{flex-direction:row;flex-wrap:wrap;gap:6px}
+    .grid2,.cards{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr 1fr}
+    .step{border-right:none;border-bottom:1px solid var(--line)}
+  }
+  @media (max-width:560px){.flow{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="side">
+    <div>
+      <div class="brandmark">Vade<span>mecum</span></div>
+      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:'IBM Plex Mono',monospace"><a href="index.html" style="text-decoration:none;color:inherit">&larr; tutti i progetti</a></div>
+    </div>
+    <div>
+      <div class="kicker">Sezioni</div>
+      <nav class="toc" id="toc">
+        <a href="#intro" class="active"><span class="n">01</span> In una frase</a>
+        <a href="#stack"><span class="n">02</span> Stack e strumenti</a>
+        <a href="#flusso"><span class="n">03</span> Come funziona</a>
+        <a href="#onboarding"><span class="n">04</span> Onboarding + cliente</a>
+        <a href="#paletti"><span class="n">05</span> Paletti e stato</a>
+      </nav>
+    </div>
+    <div class="foot">
+      <b>Preventivi AI - Food Lab</b><br>
+      Ultimo aggiornamento: 30 lug 2026<br>
+      Owner: Tomas &middot; Fonte: repo PREVENTIVI AI/Food Lab Experience
+    </div>
+  </aside>
+  <main>
+    <header class="hero" id="top">
+      <div class="eyebrow">Vademecum &middot; Onboarding collaboratori</div>
+      <h1>Preventivi AI<br>Food Lab</h1>
+      <p class="lede">Deck e preventivi con prezzi per le proposte ai clienti. Il caso Food Lab Experience: una proposta con formula ibrida di pricing, presentata come pagina sfogliabile.</p>
+      <div class="chips">
+        <span class="chip state"><span class="dot"></span>Stato: <b>in uso</b></span>
+        <span class="chip"><span class="dot"></span>Tipo: <b>deck/preventivo</b></span>
+        <span class="chip"><span class="dot"></span>Formato: <b>HTML</b></span>
+        <span class="chip"><span class="dot"></span>Prezzi: <b>inclusi</b></span>
+      </div>
+    </header>
+
+    <section id="intro">
+      <div class="sechead"><span class="secnum">01</span><div><h2>In una frase, e a chi serve</h2><div class="sub">Orientarsi in 30 secondi.</div></div></div>
+      <div class="grid2">
+        <div>
+          <p><b>Cos&rsquo;è.</b> Proposte commerciali (deck/preventivo) costruite come pagina HTML da presentare al cliente. Il primo caso è Food Lab Experience, con prezzi e formula ibrida.</p>
+          <p><b>Il problema che risolve.</b> Un preventivo in PDF piatto convince poco. Qui la proposta è una pagina curata che racconta valore e prezzo insieme.</p>
+          <p><b>Perché è fatto così.</b> HTML sfogliabile = controllo pieno sulla presentazione, si manda con un link e si aggiorna in fretta.</p>
+        </div>
+        <div class="callout">
+          <div class="lbl">A chi serve</div>
+          <ul>
+            <li><b>Tomas</b>Presenta al cliente una proposta che vende, non un semplice foglio prezzi.</li>
+            <li><b>Collaboratore</b>Duplica il formato per un nuovo preventivo cambiando contenuti e cifre.</li>
+            <li><b>Cliente</b>Legge una proposta chiara: cosa riceve e quanto costa.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section id="stack">
+      <div class="sechead"><span class="secnum">02</span><div><h2>Stack e strumenti</h2><div class="sub">Con cosa è costruito, e perché.</div></div></div>
+      <table class="tbl">
+        <thead><tr><th>Strumento</th><th>Ruolo nel progetto</th><th>Perché scelto</th></tr></thead>
+        <tbody>
+          <tr><td>HTML/CSS <span class="tag">formato</span></td><td>La proposta come pagina sfogliabile.</td><td>Controllo totale, condivisibile con un link.</td></tr>
+          <tr><td>Script Proposta (.rtf) <span class="tag n">fonte</span></td><td>Il testo e l&rsquo;argomentario della proposta.</td><td>Base del contenuto.</td></tr>
+          <tr><td>Formula pricing <span class="tag n">modello</span></td><td>Ibrida: fisso + mensile + percentuali.</td><td>Decisa insieme al cliente.</td></tr>
+        </tbody>
+      </table>
+      <h3>Formula Food Lab</h3>
+      <table class="tbl">
+        <thead><tr><th>Voce</th><th>Valore</th></tr></thead>
+        <tbody>
+          <tr><td>Setup iniziale</td><td>1.200 &euro;</td></tr>
+          <tr><td>Canone mensile</td><td>790 &euro;/mese</td></tr>
+          <tr><td>Quota su risultati</td><td>10%</td></tr>
+          <tr><td>Quota aggiuntiva</td><td>8%</td></tr>
+        </tbody>
+      </table>
+      <div class="note">Il dettaglio esatto delle voci percentuali e nel deck: qui la formula e riassunta.</div>
+    </section>
+    <section id="flusso">
+      <div class="sechead"><span class="secnum">03</span><div><h2>Come funziona - il flusso</h2><div class="sub">Il pattern del progetto, passo per passo.</div></div></div>
+      <p class="muted">Da brief del cliente a proposta presentata.</p>
+      <div class="flow">
+        <div class="step"><div class="sn">01</div><h4>Brief</h4><p>Cosa vuole il cliente, budget e obiettivi.</p><span class="cmd">brief</span></div>
+        <div class="step"><div class="sn">02</div><h4>Bozza</h4><p>Claude aiuta a strutturare proposta e testi.</p><span class="cmd">claude</span></div>
+        <div class="step"><div class="sn">03</div><h4>Prezzi</h4><p>Applica la formula ibrida concordata.</p><span class="cmd">pricing</span></div>
+        <div class="step"><div class="sn">04</div><h4>Deck</h4><p>Impagina in HTML sfogliabile.</p><span class="cmd">index.html</span></div>
+        <div class="step manual"><div class="sn">05</div><h4>Presenta</h4><p>Invii il link e presenti al cliente.</p><span class="cmd">manuale</span></div>
+      </div>
+      <div class="note"><b>Regola chiave.</b> I prezzi si decidono con il cliente: qui è documentato il caso Food Lab, non un listino fisso.</div>
+      <h3>Dove finiscono le cose</h3>
+      <table class="tbl">
+        <thead><tr><th>File</th><th>Contenuto</th></tr></thead>
+        <tbody>
+          <tr><td><code>Food Lab Experience/index.html</code></td><td>Il deck sfogliabile.</td></tr>
+          <tr><td><code>Food Lab Experience/Script Proposta ....rtf</code></td><td>Il testo della proposta.</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section id="onboarding">
+      <div class="sechead"><span class="secnum">04</span><div><h2>Onboarding collaboratore + spiegazione cliente</h2><div class="sub">Allineare chi arriva, e raccontarlo a chi non è tecnico.</div></div></div>
+      <div class="cards">
+        <div class="ocard">
+          <div class="lbl">Collaboratore - primi passi</div>
+          <h4>Da zero a produttivo</h4>
+          <ol>
+            <li>Apri <code>Food Lab Experience/index.html</code> per vedere il formato.</li>
+            <li>Leggi lo Script Proposta per capire l&rsquo;argomentario.</li>
+            <li>Duplica la cartella per un nuovo preventivo.</li>
+            <li>Cambia testi e cifre, poi manda il link.</li>
+          </ol>
+        </div>
+        <div class="ocard">
+          <div class="lbl">Collaboratore - cosa deve saper fare</div>
+          <h4>Le competenze minime</h4>
+          <p>HTML/CSS di base per adattare il deck e chiarezza sui numeri della formula. Il testo si costruisce con Claude.</p>
+          <p style="margin-top:10px"><b>Regola d'oro:</b> mai numeri inventati: le cifre di un preventivo vanno confermate col cliente prima di mandarle.</p>
+        </div>
+      </div>
+      <div class="pitch">
+        <div class="lbl">Come lo spieghi al cliente (non tecnico)</div>
+        <p>&laquo;La tua proposta non è un foglio prezzi: è una pagina che racconta cosa ottieni e quanto costa, chiara e sfogliabile.&raquo;</p>
+        <p>La formula è su misura: una parte fissa, un canone e una quota sui risultati.</p>
+      </div>
+      <div class="warn">
+        <div class="lbl">Paletti da spiegare subito</div>
+        <ul>
+          <li><b>Prezzi da confermare</b> col cliente prima dell&rsquo;invio.</li>
+          <li><b>La formula è specifica</b> di Food Lab, non un listino generale.</li>
+          <li><b>Il deck è una proposta,</b> non un contratto.</li>
+        </ul>
+      </div>
+    </section>
+    <section id="paletti">
+      <div class="sechead"><span class="secnum">05</span><div><h2>Paletti, limiti e stato</h2><div class="sub">Cosa è vero oggi, cosa manca.</div></div></div>
+      <div class="grid2">
+        <div>
+          <h3>Da fare più avanti</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td>Template</td><td>Rendere il deck riusabile per altri clienti.</td></tr>
+          <tr><td>Generatore</td><td>Da brief a bozza di deck con Claude.</td></tr>
+        </tbody>
+      </table>
+        </div>
+        <div class="callout">
+          <div class="lbl">Stato reale (onesto)</div>
+          <div class="kv">
+            <div class="row"><span class="k">Tipo</span><span class="v">Deck/preventivo</span></div>
+            <div class="row"><span class="k">Caso</span><span class="v">Food Lab Experience</span></div>
+            <div class="row"><span class="k">Formula</span><span class="v">1.200 + 790/mese + 10% + 8%</span></div>
+            <div class="row"><span class="k">Prezzi</span><span class="v">Nel deck</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="pgfoot">
+      <span>Vademecum &middot; Preventivi AI - Food Lab</span>
+      <span class="mono">v1.0 &middot; 2026-07-30</span>
+    </footer>
+  </main>
+</div>
+<script>
+  const links=[...document.querySelectorAll("#toc a")];
+  const map=new Map(links.map(a=>[a.getAttribute("href").slice(1),a]));
+  const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove("active"));map.get(e.target.id)&&map.get(e.target.id).classList.add("active");}});},{rootMargin:"-45% 0px -50% 0px"});
+  document.querySelectorAll("section,#intro").forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vademecum - Automazione Social AL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f1ea;
+    --paper-2:#ebe6db;
+    --ink:#16130f;
+    --ink-2:#4a443b;
+    --ink-3:#7d766a;
+    --line:#d8d1c2;
+    --accent:#b4331f;      /* rosso mattone - un ruolo: marcatori, numeri sezione, stato */
+    --accent-soft:#f0dcd6;
+    --ok:#3f6b3f;
+    --card:#fbf9f4;
+    --radius:4px;
+    --maxw:1200px;
+    font-synthesis:none;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Montserrat",system-ui,sans-serif;
+    font-size:15px;line-height:1.6;
+    text-rendering:optimizeLegibility;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,.025) 1px, transparent 0);
+    background-size:22px 22px;
+  }
+  a{color:inherit}
+  code,.mono{font-family:"IBM Plex Mono",monospace}
+
+  /* ---------- shell: sidebar + main ---------- */
+  .wrap{display:grid;grid-template-columns:248px 1fr;max-width:var(--maxw);margin:0 auto;gap:0}
+  .side{
+    position:sticky;top:0;align-self:start;height:100vh;
+    border-right:1px solid var(--line);
+    padding:34px 26px 34px 30px;
+    display:flex;flex-direction:column;gap:26px;
+    background:linear-gradient(180deg,var(--paper) 0%, var(--paper) 100%);
+  }
+  .brandmark{font-family:"Montserrat",sans-serif;font-weight:900;font-size:20px;line-height:1.05;letter-spacing:-.01em}
+  .brandmark span{color:var(--accent)}
+  .side .kicker{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+  nav.toc{display:flex;flex-direction:column;gap:2px}
+  nav.toc a{
+    display:flex;gap:10px;align-items:baseline;
+    text-decoration:none;color:var(--ink-2);
+    padding:7px 9px;border-radius:var(--radius);font-size:13.5px;font-weight:500;
+    border:1px solid transparent;transition:.15s;
+  }
+  nav.toc a .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600;min-width:16px}
+  nav.toc a:hover{background:var(--paper-2);border-color:var(--line)}
+  nav.toc a.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  nav.toc a.active .n{color:var(--paper)}
+  .side .foot{margin-top:auto;font-size:11px;color:var(--ink-3);line-height:1.5;border-top:1px solid var(--line);padding-top:16px}
+  .side .foot b{color:var(--ink-2);font-weight:600}
+
+  main{padding:0 clamp(28px,5vw,72px) 120px;min-width:0}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:52px 0 30px;border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Montserrat",sans-serif;font-weight:900;font-size:clamp(38px,6vw,62px);line-height:.98;letter-spacing:-.02em;margin:14px 0 16px;text-wrap:balance}
+  .lede{font-size:18px;color:var(--ink-2);max-width:60ch;text-wrap:pretty}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .chip{
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:500;
+    padding:5px 10px;border:1px solid var(--line);border-radius:100px;background:var(--card);color:var(--ink-2);
+    display:inline-flex;gap:7px;align-items:center;
+  }
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .chip.state .dot{background:var(--ok)}
+  .chip b{color:var(--ink);font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  .sechead{display:flex;align-items:baseline;gap:14px;margin-bottom:22px}
+  .secnum{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent);font-weight:600;padding-top:6px}
+  h2{font-family:"Montserrat",sans-serif;font-weight:600;font-size:clamp(24px,3.4vw,34px);line-height:1.05;letter-spacing:-.01em}
+  h2 + .sub{color:var(--ink-3);font-size:13.5px;margin-top:4px}
+  h3{font-family:"Montserrat";font-weight:700;font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink);margin:26px 0 12px;display:flex;align-items:center;gap:9px}
+  h3::before{content:"";width:16px;height:2px;background:var(--accent)}
+  p{max-width:66ch;text-wrap:pretty;margin-bottom:12px}
+  .muted{color:var(--ink-2)}
+  li,td,.step p,.ocard p,.warn li,.note{text-wrap:pretty}
+
+  /* two-col intro */
+  .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:26px;align-items:start}
+  .callout{
+    background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:var(--radius);padding:18px 20px;
+  }
+  .callout .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+  .callout ul{list-style:none;display:flex;flex-direction:column}
+  .callout li{font-size:13px;color:var(--ink-2);padding:11px 0;border-bottom:1px solid var(--line);text-wrap:pretty}
+  .callout li:first-child{padding-top:0}
+  .callout li:last-child{border-bottom:none;padding-bottom:0}
+  .callout li b{display:block;color:var(--ink);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+  /* key/value allineato (stato reale) */
+  .kv{display:flex;flex-direction:column}
+  .kv .row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .kv .row:first-child{padding-top:0}
+  .kv .row:last-child{border-bottom:none;padding-bottom:0}
+  .kv .k{color:var(--ink-2)}
+  .kv .v{font-weight:700;color:var(--ink);text-align:right;text-wrap:pretty}
+
+  /* table (Football Manager density) */
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}
+  .tbl th{
+    text-align:left;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:600;padding:9px 12px;border-bottom:1.5px solid var(--ink)
+  }
+  .tbl td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .tbl tr:hover td{background:var(--card)}
+  .tbl td:first-child{font-weight:600;white-space:nowrap}
+  .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 7px;border-radius:3px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .tag.n{background:var(--paper-2);color:var(--ink-2)}
+
+  /* flow */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:10px 0 4px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+  .step{padding:16px 14px;border-right:1px solid var(--line);position:relative;display:flex;flex-direction:column}
+  .step:last-child{border-right:none}
+  .step .sn{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600}
+  .step h4{font-family:"Montserrat",sans-serif;font-weight:700;font-size:16px;margin:6px 0 6px;letter-spacing:-.01em}
+  .step p{font-size:12px;color:var(--ink-2);margin:0;max-width:none;text-wrap:pretty}
+  .step .cmd{margin-top:auto;font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--ink);color:var(--paper);padding:4px 8px;border-radius:3px;align-self:flex-start;margin-top:14px}
+  .flow .step .cmd{margin-top:auto}
+  .step.manual{background:var(--accent-soft)}
+  .step.manual .sn{color:var(--accent)}
+
+  .note{font-size:12.5px;color:var(--ink-3);margin-top:12px;padding-left:14px;border-left:2px solid var(--line)}
+
+  /* onboarding cards */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .ocard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .ocard .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px}
+  .ocard h4{font-family:"Montserrat",sans-serif;font-weight:600;font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
+  .ocard ol{margin:8px 0 0 18px;font-size:13px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+  .ocard p{font-size:13px;color:var(--ink-2);max-width:none}
+
+  .pitch{background:var(--ink);color:var(--paper);border-radius:var(--radius);padding:24px 26px;margin-top:20px}
+  .pitch .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#e0a99e;font-weight:600;margin-bottom:10px}
+  .pitch p{color:#e8e3d8;font-size:16px;max-width:70ch;font-family:"Montserrat",sans-serif;font-weight:400;line-height:1.5}
+  .pitch p + p{margin-top:10px}
+
+  .warn{background:var(--accent-soft);border:1px solid #e2b8ae;border-radius:var(--radius);padding:16px 18px;margin-top:16px}
+  .warn .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px}
+  .warn ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .warn li{font-size:13px;display:flex;gap:9px;color:var(--ink-2)}
+  .warn li b{color:var(--ink)}
+  .warn li::before{content:"!";font-family:"IBM Plex Mono",monospace;color:var(--accent);font-weight:700}
+
+  footer.pgfoot{padding:32px 0 0;color:var(--ink-3);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .draftflag{position:fixed;bottom:16px;right:16px;background:var(--accent);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;padding:7px 12px;border-radius:100px;letter-spacing:.06em;box-shadow:0 4px 14px rgba(0,0,0,.18);z-index:50}
+
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr}
+    .side{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px;padding:18px 22px}
+    .side .kicker,.side .foot{display:none}
+    nav.toc{flex-direction:row;flex-wrap:wrap;gap:6px}
+    .grid2,.cards{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr 1fr}
+    .step{border-right:none;border-bottom:1px solid var(--line)}
+  }
+  @media (max-width:560px){.flow{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div>
+      <div class="brandmark">Vade<span>mecum</span></div>
+      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:'IBM Plex Mono',monospace">progetto / dossier</div>
+    </div>
+    <div>
+      <div class="kicker">Sezioni</div>
+      <nav class="toc" id="toc">
+        <a href="#intro" class="active"><span class="n">01</span> In una frase</a>
+        <a href="#stack"><span class="n">02</span> Stack e strumenti</a>
+        <a href="#flusso"><span class="n">03</span> Come funziona</a>
+        <a href="#onboarding"><span class="n">04</span> Onboarding + cliente</a>
+        <a href="#paletti"><span class="n">05</span> Paletti e stato</a>
+      </nav>
+    </div>
+    <div class="foot">
+      <b>Automazione Social AL</b><br>
+      Ultimo aggiornamento: 30 lug 2026<br>
+      Owner: Tomas · Fonte: repo motore-social
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+    <header class="hero" id="top">
+      <div class="eyebrow">Vademecum · Onboarding collaboratori</div>
+      <h1>Automazione<br>Social AL</h1>
+      <p class="lede">Un motore unico che gestisce i social di più clienti con Claude Code: una sola logica, ogni cliente con i suoi dati. Crea i contenuti della settimana nel tono giusto e ricicla i migliori in caroselli.</p>
+      <div class="chips">
+        <span class="chip state"><span class="dot"></span>Stato: <b>in uso</b></span>
+        <span class="chip"><span class="dot"></span>Tipo: <b>sistema multi-cliente</b></span>
+        <span class="chip"><span class="dot"></span>Piattaforma: <b>Instagram</b></span>
+        <span class="chip"><span class="dot"></span>Clienti attivi: <b>2</b></span>
+      </div>
+    </header>
+
+    <!-- 01 -->
+    <section id="intro">
+      <div class="sechead"><span class="secnum">01</span><div><h2>In una frase, e a chi serve</h2><div class="sub">Orientarsi in 30 secondi.</div></div></div>
+      <div class="grid2">
+        <div>
+          <p><b>Cos'è.</b> Un set di 3 skill di Claude Code che, per ogni cliente social, fanno l'onboarding una volta, poi ogni settimana <b>creano</b> i contenuti e <b>riciclano</b> i migliori. La logica è una sola; cambi cliente = cambi solo l'argomento passato alla skill.</p>
+          <p><b>Il problema che risolve.</b> Gestire più pagine a mano è lento e incoerente: ogni cliente ha un tono, un pubblico, dei paletti. Qui il tono di ogni cliente vive in due file (<code>profilo.md</code> + <code>voice.md</code>) e le skill leggono solo quelli - niente tono "medio da AI".</p>
+          <p><b>Perché è fatto così.</b> Vive in iCloud e usa percorsi relativi, quindi lo stesso file funziona su Mac e Windows senza modifiche. Nessun percorso assoluto dentro le skill.</p>
+        </div>
+        <div class="callout">
+          <div class="lbl">A chi serve</div>
+          <ul>
+            <li><b>Tomas</b>Manda avanti il ciclo settimanale di ogni cliente gestito dal motore.</li>
+            <li><b>Collaboratore social</b>Aggiunge un cliente nuovo e lancia le due skill della settimana, crea e ricicla.</li>
+            <li><b>Cliente finale (AL)</b>Riceve contenuti coerenti col proprio brand, li approva e poi li pubblica.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section id="stack">
+      <div class="sechead"><span class="secnum">02</span><div><h2>Stack e strumenti</h2><div class="sub">Con cosa è costruito, e perché.</div></div></div>
+      <table class="tbl">
+        <thead><tr><th>Strumento</th><th>Ruolo nel progetto</th><th>Perché scelto</th></tr></thead>
+        <tbody>
+          <tr><td>Claude Code <span class="tag">motore</span></td><td>Esegue le 3 skill che leggono i dati del cliente e scrivono i contenuti.</td><td>Una sola lingua di lavoro, skill come file di testo versionabili.</td></tr>
+          <tr><td>Markdown <span class="tag n">dati</span></td><td><code>profilo.md</code> + <code>voice.md</code> per cliente: vincoli, pilastri, tono, off-limits.</td><td>Leggibile, editabile a mano, niente database da gestire.</td></tr>
+          <tr><td>iCloud Drive <span class="tag n">sync</span></td><td>Ospita tutto il motore, sincronizza tra Mac e PC Windows.</td><td>Stesso file su due dispositivi senza copie o Git obbligatorio.</td></tr>
+          <tr><td>Symlink → ~/.claude/skills <span class="tag n">collegamento</span></td><td>Collega le skill in iCloud a Claude Code, una volta per dispositivo.</td><td>File unico sincronizzato, non copie da riallineare a mano.</td></tr>
+          <tr><td>HTML + Python <span class="tag n">render</span></td><td>Genera i caroselli (slide) da esportare come PNG per il post.</td><td>Controllo pieno sulla grafica, coerente col format approvato.</td></tr>
+          <tr><td>Apify / Google AI <span class="tag n">opzionale</span></td><td>Sbloccherebbero reel-scripting e caroselli generati.</td><td>Token <b>non impostati</b>: se manca il token la skill lo salta e lavora a mano.</td></tr>
+        </tbody>
+      </table>
+      <h3>Le 3 skill</h3>
+      <table class="tbl">
+        <thead><tr><th>Comando</th><th>Quando</th><th>Cosa produce</th></tr></thead>
+        <tbody>
+          <tr><td><code>/nuovo-cliente &lt;slug&gt;</code></td><td>Una volta, all'aggiunta pagina</td><td>Genera <code>profilo.md</code> + <code>voice.md</code> del cliente da sito/bio/post. Scheda da approvare.</td></tr>
+          <tr><td><code>/settimana-social &lt;slug&gt;</code></td><td>Lunedì (o quando crei)</td><td>Crea i contenuti della settimana nel tono del cliente. Salva in <code>output/AAAA-MM-GG.md</code>.</td></tr>
+          <tr><td><code>/ricicla-social &lt;slug&gt;</code></td><td>Venerdì (o quando ricicli)</td><td>Ricicla i più performanti in caroselli, in coda per la settimana dopo.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 03 -->
+    <section id="flusso">
+      <div class="sechead"><span class="secnum">03</span><div><h2>Come funziona - il flusso</h2><div class="sub">Da cliente nuovo a post caricato.</div></div></div>
+      <p class="muted">Il ciclo per ogni cliente: <b>onboarding una volta → lunedì crei → venerdì ricicli il meglio</b>. L'ultimo passo è manuale, di proposito.</p>
+      <div class="flow">
+        <div class="step"><div class="sn">01</div><h4>Onboarding</h4><p>Incolli sito, bio, post. Rispondi a 4-5 domande. Approvi la scheda.</p><span class="cmd">/nuovo-cliente</span></div>
+        <div class="step"><div class="sn">02</div><h4>Crea settimana</h4><p>La skill legge profilo + voice + ricerca di settore e scrive il mix.</p><span class="cmd">/settimana-social</span></div>
+        <div class="step"><div class="sn">03</div><h4>Ricicla</h4><p>I contenuti migliori diventano caroselli, messi in coda.</p><span class="cmd">/ricicla-social</span></div>
+        <div class="step"><div class="sn">04</div><h4>Render slide</h4><p>HTML+Python generano le slide del carosello come PNG.</p><span class="cmd">export_slides.py</span></div>
+        <div class="step manual"><div class="sn">05</div><h4>Approva &amp; carica</h4><p>Tomas/cliente rilegge, approva e carica a mano su Instagram.</p><span class="cmd">manuale</span></div>
+      </div>
+      <div class="note"><b>Regola chiave.</b> Le skill non hanno un tono proprio: leggono SOLO <code>profilo.md</code> + <code>voice.md</code> del cliente passato come argomento. <code>/settimana-social pizzeria-mario</code> è diverso da <code>/settimana-social studio-rossi</code> perché legge cartelle diverse, non perché la skill "sa" qualcosa di loro.</div>
+      <h3>Dove finiscono le cose</h3>
+      <table class="tbl">
+        <thead><tr><th>Cartella</th><th>Contenuto</th></tr></thead>
+        <tbody>
+          <tr><td><code>motore-social/</code></td><td>La logica: le 3 skill + il template cliente. Collegata a ~/.claude/skills.</td></tr>
+          <tr><td><code>clienti/&lt;slug&gt;/</code></td><td>I dati di quel cliente: profilo, voice, performance, output.</td></tr>
+          <tr><td><code>clienti/&lt;slug&gt;/output/</code></td><td>Contenuti creati (per data) + <code>coda-prossima-settimana.md</code>.</td></tr>
+          <tr><td><code>clienti/&lt;slug&gt;/render/</code></td><td>HTML dei caroselli, foto originali, script di export in PNG.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 04 -->
+    <section id="onboarding">
+      <div class="sechead"><span class="secnum">04</span><div><h2>Onboarding collaboratore + spiegazione cliente</h2><div class="sub">Come allineare chi arriva nuovo, e come raccontarlo a chi non è tecnico.</div></div></div>
+      <div class="cards">
+        <div class="ocard">
+          <div class="lbl">Collaboratore - primi passi</div>
+          <h4>Da zero a produttivo</h4>
+          <ol>
+            <li>Installa Claude Code e collega le skill (blocco symlink nel README, una volta per dispositivo).</li>
+            <li>Apri un cliente esistente in <code>clienti/al-consultant/</code> e leggi <code>profilo.md</code> + <code>voice.md</code>: è lì che vive tutto il tono.</li>
+            <li>Prova <code>/settimana-social al-consultant</code> e leggi l'output prima di toccare nulla.</li>
+            <li>Aggiungi un cliente finto con <code>/nuovo-cliente prova</code> per capire l'onboarding.</li>
+          </ol>
+        </div>
+        <div class="ocard">
+          <div class="lbl">Collaboratore - cosa deve saper fare</div>
+          <h4>Le competenze minime</h4>
+          <p>Non serve programmare. Serve: capire cosa distingue il tono di un cliente, compilare/correggere i due file .md, lanciare le tre skill al momento giusto, e avere occhio critico sui contenuti prima che vadano al cliente.</p>
+          <p style="margin-top:10px"><b>Regola d'oro:</b> mai numeri, fonti o performance inventati. Dato mancante = detto, non riempito.</p>
+        </div>
+      </div>
+      <div class="pitch">
+        <div class="lbl">Come lo spieghi al cliente (non tecnico)</div>
+        <p>"Abbiamo un sistema che conosce a memoria il tuo brand: il tuo tono, i tuoi pilastri, cosa non diresti mai. Ogni settimana prepara i contenuti già nel tuo stile, tu li approvi e li pubblichi. Niente post improvvisati, niente tono che cambia da un giorno all'altro."</p>
+        <p>Il cliente resta al comando: nulla va online senza la sua approvazione.</p>
+      </div>
+      <div class="warn">
+        <div class="lbl">Paletti da spiegare subito</div>
+        <ul>
+          <li><b>Nessuna pubblicazione automatica.</b> Le skill preparano, una persona carica a mano su Instagram.</li>
+          <li><b>Il tono è vincolato.</b> Ogni campo del profilo è un vincolo, non un suggerimento.</li>
+          <li><b>Formato AL fisso.</b> "Il percorso" è sempre carosello, mai post singolo.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section id="paletti">
+      <div class="sechead"><span class="secnum">05</span><div><h2>Paletti, limiti e stato</h2><div class="sub">Cosa è vero oggi, cosa è ancora da fare.</div></div></div>
+      <div class="grid2">
+        <div>
+          <h3>Da fare più avanti</h3>
+          <table class="tbl">
+            <tbody>
+              <tr><td>Promemoria</td><td>Lunedì/venerdì per cliente via <code>/schedule</code>.</td></tr>
+              <tr><td>Auto-selezione</td><td>Scelta automatica dei migliori quando <code>performance.md</code> ha ~5 righe.</td></tr>
+              <tr><td>Token</td><td>Valutare Apify/Google per sbloccare reel-scripting e caroselli generati.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <div class="lbl">Stato reale (onesto)</div>
+          <div class="kv">
+            <div class="row"><span class="k">Pubblicazione IG</span><span class="v">Manuale</span></div>
+            <div class="row"><span class="k">Token Apify / Google</span><span class="v">Non impostati</span></div>
+            <div class="row"><span class="k">Clienti onboardati</span><span class="v">al-consultant · al-altraparte</span></div>
+            <div class="row"><span class="k">Selezione automatica migliori</span><span class="v">Dormiente</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="pgfoot">
+      <span>Vademecum · Automazione Social AL </span>
+      <span class="mono">v0.1 draft · 2026-07-30</span>
+    </footer>
+  </main>
+</div>
+
+
+<script>
+  // evidenzia sezione attiva nella TOC
+  const links=[...document.querySelectorAll('#toc a')];
+  const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  const obs=new IntersectionObserver((es)=>{
+    es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));map.get(e.target.id)?.classList.add('active');}});
+  },{rootMargin:'-45% 0px -50% 0px'});
+  document.querySelectorAll('section,#intro').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vademecum - Architettura strumenti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f1ea;
+    --paper-2:#ebe6db;
+    --ink:#16130f;
+    --ink-2:#4a443b;
+    --ink-3:#7d766a;
+    --line:#d8d1c2;
+    --accent:#b4331f;      /* rosso mattone - un ruolo: marcatori, numeri sezione, stato */
+    --accent-soft:#f0dcd6;
+    --ok:#3f6b3f;
+    --card:#fbf9f4;
+    --radius:4px;
+    --maxw:1200px;
+    font-synthesis:none;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Montserrat",system-ui,sans-serif;
+    font-size:15px;line-height:1.6;
+    text-rendering:optimizeLegibility;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,.025) 1px, transparent 0);
+    background-size:22px 22px;
+  }
+  a{color:inherit}
+  code,.mono{font-family:"IBM Plex Mono",monospace}
+
+  /* ---------- shell: sidebar + main ---------- */
+  .wrap{display:grid;grid-template-columns:248px 1fr;max-width:var(--maxw);margin:0 auto;gap:0}
+  .side{
+    position:sticky;top:0;align-self:start;height:100vh;
+    border-right:1px solid var(--line);
+    padding:34px 26px 34px 30px;
+    display:flex;flex-direction:column;gap:26px;
+    background:linear-gradient(180deg,var(--paper) 0%, var(--paper) 100%);
+  }
+  .brandmark{font-family:"Montserrat",sans-serif;font-weight:900;font-size:20px;line-height:1.05;letter-spacing:-.01em}
+  .brandmark span{color:var(--accent)}
+  .side .kicker{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+  nav.toc{display:flex;flex-direction:column;gap:2px}
+  nav.toc a{
+    display:flex;gap:10px;align-items:baseline;
+    text-decoration:none;color:var(--ink-2);
+    padding:7px 9px;border-radius:var(--radius);font-size:13.5px;font-weight:500;
+    border:1px solid transparent;transition:.15s;
+  }
+  nav.toc a .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600;min-width:16px}
+  nav.toc a:hover{background:var(--paper-2);border-color:var(--line)}
+  nav.toc a.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  nav.toc a.active .n{color:var(--paper)}
+  .side .foot{margin-top:auto;font-size:11px;color:var(--ink-3);line-height:1.5;border-top:1px solid var(--line);padding-top:16px}
+  .side .foot b{color:var(--ink-2);font-weight:600}
+
+  main{padding:0 clamp(28px,5vw,72px) 120px;min-width:0}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:52px 0 30px;border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Montserrat",sans-serif;font-weight:900;font-size:clamp(38px,6vw,62px);line-height:.98;letter-spacing:-.02em;margin:14px 0 16px;text-wrap:balance}
+  .lede{font-size:18px;color:var(--ink-2);max-width:60ch;text-wrap:pretty}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .chip{
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:500;
+    padding:5px 10px;border:1px solid var(--line);border-radius:100px;background:var(--card);color:var(--ink-2);
+    display:inline-flex;gap:7px;align-items:center;
+  }
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .chip.state .dot{background:var(--ok)}
+  .chip b{color:var(--ink);font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  .sechead{display:flex;align-items:baseline;gap:14px;margin-bottom:22px}
+  .secnum{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent);font-weight:600;padding-top:6px}
+  h2{font-family:"Montserrat",sans-serif;font-weight:600;font-size:clamp(24px,3.4vw,34px);line-height:1.05;letter-spacing:-.01em}
+  h2 + .sub{color:var(--ink-3);font-size:13.5px;margin-top:4px}
+  h3{font-family:"Montserrat";font-weight:700;font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink);margin:26px 0 12px;display:flex;align-items:center;gap:9px}
+  h3::before{content:"";width:16px;height:2px;background:var(--accent)}
+  p{max-width:66ch;text-wrap:pretty;margin-bottom:12px}
+  .muted{color:var(--ink-2)}
+  li,td,.step p,.ocard p,.warn li,.note{text-wrap:pretty}
+
+  /* two-col intro */
+  .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:26px;align-items:start}
+  .callout{
+    background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:var(--radius);padding:18px 20px;
+  }
+  .callout .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+  .callout ul{list-style:none;display:flex;flex-direction:column}
+  .callout li{font-size:13px;color:var(--ink-2);padding:11px 0;border-bottom:1px solid var(--line);text-wrap:pretty}
+  .callout li:first-child{padding-top:0}
+  .callout li:last-child{border-bottom:none;padding-bottom:0}
+  .callout li b{display:block;color:var(--ink);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+  /* key/value allineato (stato reale) */
+  .kv{display:flex;flex-direction:column}
+  .kv .row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .kv .row:first-child{padding-top:0}
+  .kv .row:last-child{border-bottom:none;padding-bottom:0}
+  .kv .k{color:var(--ink-2)}
+  .kv .v{font-weight:700;color:var(--ink);text-align:right;text-wrap:pretty}
+
+  /* table (Football Manager density) */
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}
+  .tbl th{
+    text-align:left;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:600;padding:9px 12px;border-bottom:1.5px solid var(--ink)
+  }
+  .tbl td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .tbl tr:hover td{background:var(--card)}
+  .tbl td:first-child{font-weight:600;white-space:nowrap}
+  .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 7px;border-radius:3px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .tag.n{background:var(--paper-2);color:var(--ink-2)}
+
+  /* flow */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:10px 0 4px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+  .step{padding:16px 14px;border-right:1px solid var(--line);position:relative;display:flex;flex-direction:column}
+  .step:last-child{border-right:none}
+  .step .sn{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600}
+  .step h4{font-family:"Montserrat",sans-serif;font-weight:700;font-size:16px;margin:6px 0 6px;letter-spacing:-.01em}
+  .step p{font-size:12px;color:var(--ink-2);margin:0;max-width:none;text-wrap:pretty}
+  .step .cmd{margin-top:auto;font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--ink);color:var(--paper);padding:4px 8px;border-radius:3px;align-self:flex-start;margin-top:14px}
+  .flow .step .cmd{margin-top:auto}
+  .step.manual{background:var(--accent-soft)}
+  .step.manual .sn{color:var(--accent)}
+
+  .note{font-size:12.5px;color:var(--ink-3);margin-top:12px;padding-left:14px;border-left:2px solid var(--line)}
+
+  /* onboarding cards */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .ocard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .ocard .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px}
+  .ocard h4{font-family:"Montserrat",sans-serif;font-weight:600;font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
+  .ocard ol{margin:8px 0 0 18px;font-size:13px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+  .ocard p{font-size:13px;color:var(--ink-2);max-width:none}
+
+  .pitch{background:var(--ink);color:var(--paper);border-radius:var(--radius);padding:24px 26px;margin-top:20px}
+  .pitch .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#e0a99e;font-weight:600;margin-bottom:10px}
+  .pitch p{color:#e8e3d8;font-size:16px;max-width:70ch;font-family:"Montserrat",sans-serif;font-weight:400;line-height:1.5}
+  .pitch p + p{margin-top:10px}
+
+  .warn{background:var(--accent-soft);border:1px solid #e2b8ae;border-radius:var(--radius);padding:16px 18px;margin-top:16px}
+  .warn .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px}
+  .warn ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .warn li{font-size:13px;display:flex;gap:9px;color:var(--ink-2)}
+  .warn li b{color:var(--ink)}
+  .warn li::before{content:"!";font-family:"IBM Plex Mono",monospace;color:var(--accent);font-weight:700}
+
+  footer.pgfoot{padding:32px 0 0;color:var(--ink-3);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .draftflag{position:fixed;bottom:16px;right:16px;background:var(--accent);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;padding:7px 12px;border-radius:100px;letter-spacing:.06em;box-shadow:0 4px 14px rgba(0,0,0,.18);z-index:50}
+
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr}
+    .side{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px;padding:18px 22px}
+    .side .kicker,.side .foot{display:none}
+    nav.toc{flex-direction:row;flex-wrap:wrap;gap:6px}
+    .grid2,.cards{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr 1fr}
+    .step{border-right:none;border-bottom:1px solid var(--line)}
+  }
+  @media (max-width:560px){.flow{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div>
+      <div class="brandmark">Vade<span>mecum</span></div>
+      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:'IBM Plex Mono',monospace">progetto / dossier</div>
+    </div>
+    <div>
+      <div class="kicker">Sezioni</div>
+      <nav class="toc" id="toc">
+        <a href="#intro" class="active"><span class="n">01</span> In una frase</a>
+        <a href="#stack"><span class="n">02</span> Stack e strumenti</a>
+        <a href="#flusso"><span class="n">03</span> Come funziona</a>
+        <a href="#onboarding"><span class="n">04</span> Onboarding + cliente</a>
+        <a href="#paletti"><span class="n">05</span> Paletti e stato</a>
+      </nav>
+    </div>
+    <div class="foot">
+      <b>Architettura strumenti</b><br>
+      Ultimo aggiornamento: 30 lug 2026<br>
+      Owner: Tomas · Fonte: repo PROGETTI AI
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+    <header class="hero" id="top">
+      <div class="eyebrow">Vademecum · Onboarding collaboratori</div>
+      <h1>Architettura<br>strumenti</h1>
+      <p class="lede">Come sono costruiti e collegati tutti gli strumenti AI dentro PROGETTI AI. Un pattern comune a ogni progetto: Claude Code fa il lavoro, una persona controlla e decide. Un solo modo di lavorare, riusato ovunque.</p>
+      <div class="chips">
+        <span class="chip state"><span class="dot"></span>Stato: <b>in uso</b></span>
+        <span class="chip"><span class="dot"></span>Tipo: <b>meta / infrastruttura</b></span>
+        <span class="chip"><span class="dot"></span>Motore: <b>Claude Code</b></span>
+        <span class="chip"><span class="dot"></span>Progetti mappati: <b>6</b></span>
+      </div>
+    </header>
+
+    <!-- 01 -->
+    <section id="intro">
+      <div class="sechead"><span class="secnum">01</span><div><h2>In una frase, e a chi serve</h2><div class="sub">Orientarsi in 30 secondi.</div></div></div>
+      <div class="grid2">
+        <div>
+          <p><b>Cos'è.</b> La cassetta degli attrezzi condivisa da tutti i progetti di PROGETTI AI. Non un singolo software: l'insieme di scelte tecniche che si ripetono su ogni progetto - stesso motore, stessi principi, stessa cartella iCloud.</p>
+          <p><b>Il problema che risolve.</b> Senza uno standard, ogni progetto sarebbe fatto in modo diverso e incoerente. Con un'architettura comune, chi impara un progetto capisce anche gli altri: cambia il contenuto, non il modo di lavorare.</p>
+          <p><b>Perché è fatto così.</b> Tutto gira in locale sull'abbonamento di Claude, senza API key da pagare o custodire, e con l'umano che approva prima di pubblicare o inviare. Facile da capire e da mettere le mani.</p>
+        </div>
+        <div class="callout">
+          <div class="lbl">A chi serve</div>
+          <ul>
+            <li><b>Tomas</b>Usa gli stessi strumenti su ogni progetto, senza reimparare tutto da capo ogni volta.</li>
+            <li><b>Collaboratore tecnico</b>Capisce il pattern una volta sola e lo ritrova identico in ogni progetto della cartella.</li>
+            <li><b>Cliente</b>Riceve output preparati dall'AI ma sempre controllati da una persona reale prima di uscire.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section id="stack">
+      <div class="sechead"><span class="secnum">02</span><div><h2>Stack e strumenti</h2><div class="sub">Con cosa è costruito, e perché.</div></div></div>
+      <table class="tbl">
+        <thead><tr><th>Strumento</th><th>Ruolo nel progetto</th><th>Perché scelto</th></tr></thead>
+        <tbody>
+          <tr><td>Claude Code <span class="tag">motore</span></td><td>Fa il lavoro: in chat, o headless (<code>claude -p</code>) come sottoprocesso di uno script.</td><td>Usa l'abbonamento: zero costo extra, nessuna API key da gestire.</td></tr>
+          <tr><td>Python <span class="tag n">colla</span></td><td>Lega gli strumenti: legge l'input, chiama Claude, scrive l'output.</td><td>Una lingua sola, semplice da leggere e da modificare.</td></tr>
+          <tr><td>iCloud Drive <span class="tag n">sync</span></td><td>Ospita tutti i progetti e li sincronizza tra Mac e PC Windows.</td><td>Stesso file su due dispositivi, con percorsi relativi.</td></tr>
+          <tr><td>Notion <span class="tag n">hub</span></td><td>Raccoglie dati condivisi e board (hub social, questi vademecum).</td><td>Editabile da browser, condivisibile con un semplice link.</td></tr>
+          <tr><td>Composio <span class="tag n">connettori</span></td><td>Collega app esterne (Instagram, Gmail) a Claude Code.</td><td>Autenticazione gestita, niente integrazioni scritte a mano.</td></tr>
+          <tr><td>GitHub Actions <span class="tag n">cron</span></td><td>Fa girare bot pianificati (es. Telegram) senza PC acceso.</td><td>Gratis per repo piccoli, schedulazione già integrata.</td></tr>
+          <tr><td>OAuth + <code>secrets/</code> <span class="tag n">accesso</span></td><td>Login alle API (Gmail, Google), con token salvato in locale.</td><td>Lo script gira per conto suo, fuori dalla chat.</td></tr>
+        </tbody>
+      </table>
+      <h3>I progetti sotto l'architettura</h3>
+      <table class="tbl">
+        <thead><tr><th>Progetto</th><th>Cosa fa</th><th>Motore</th></tr></thead>
+        <tbody>
+          <tr><td>Automazione Social AL</td><td>Crea e ricicla contenuti social per più clienti.</td><td>Claude Code + skill</td></tr>
+          <tr><td>Mail Automation</td><td>Prepara bozze di risposta in Gmail nel tuo stile.</td><td><code>claude -p</code> + Gmail API</td></tr>
+          <tr><td>Preventivi AI</td><td>Preventivi e deck con prezzi (es. Food Lab Experience).</td><td>Claude Code</td></tr>
+          <tr><td>Configuratori AI</td><td>Configuratore prodotto (tool-vernici).</td><td>HTML/JS + Claude</td></tr>
+          <tr><td>Siti Web Evolution</td><td>Landing per clienti da un motore di temi.</td><td>motore-landing</td></tr>
+          <tr><td>Storytelling</td><td>Sito e blog di storytelling per AL.</td><td>HTML + Claude</td></tr>
+        </tbody>
+      </table>
+      <div class="note">Lo <b>stato dettagliato</b> di ogni progetto vive nel suo vademecum dedicato: qui c'è solo la mappa d'insieme.</div>
+    </section>
+
+    <!-- 03 -->
+    <section id="flusso">
+      <div class="sechead"><span class="secnum">03</span><div><h2>Come funziona - il flusso</h2><div class="sub">Il pattern comune a ogni strumento.</div></div></div>
+      <p class="muted">Ogni progetto, diverso nel contenuto, segue lo stesso schema: <b>input → il motore elabora → bozza → una persona approva → esce</b>. L'ultimo passo è quasi sempre manuale, di proposito.</p>
+      <div class="flow">
+        <div class="step"><div class="sn">01</div><h4>Input</h4><p>Dati grezzi: mail non lette, brief, profilo cliente, foto di un lavoro.</p><span class="cmd">dati</span></div>
+        <div class="step"><div class="sn">02</div><h4>Motore</h4><p>Claude Code elabora, in chat o headless lanciato da uno script.</p><span class="cmd">claude -p</span></div>
+        <div class="step"><div class="sn">03</div><h4>Bozza</h4><p>Produce un output di bozza: testo, slide, preventivo, contenuto.</p><span class="cmd">output</span></div>
+        <div class="step manual"><div class="sn">04</div><h4>Approva</h4><p>Una persona rilegge e corregge. Questo passo non si salta mai.</p><span class="cmd">umano</span></div>
+        <div class="step manual"><div class="sn">05</div><h4>Pubblica / Invia</h4><p>Caricato o inviato a mano, oppure da un cron esplicitamente autorizzato.</p><span class="cmd">manuale</span></div>
+      </div>
+      <div class="note"><b>Regola chiave.</b> Human-in-the-loop: nessuno strumento pubblica o invia da solo senza approvazione. Dove serve c'è <b>idempotenza</b> (es. Mail Automation salva gli id già lavorati in <code>processed.json</code>), così rilanciare non crea doppioni.</div>
+      <h3>Mappa cartelle di PROGETTI AI</h3>
+      <table class="tbl">
+        <thead><tr><th>Cartella</th><th>Contenuto</th></tr></thead>
+        <tbody>
+          <tr><td><code>SOCIAL FORMAT/AUTOMAZIONI/</code></td><td>Motore social multi-cliente (skill + dati clienti).</td></tr>
+          <tr><td><code>MAIL AUTOMATION/</code></td><td>Agente bozze Gmail: Python + <code>claude -p</code>.</td></tr>
+          <tr><td><code>PREVENTIVI AI/</code></td><td>Preventivi e deck (es. Food Lab Experience).</td></tr>
+          <tr><td><code>CONFIGURATORI AI/</code></td><td>Configuratori prodotto (tool-vernici).</td></tr>
+          <tr><td><code>SITI WEB EVOLUTION/</code></td><td>Landing clienti + motore-landing con temi.</td></tr>
+          <tr><td><code>STORYTELLING/</code> · <code>VADEMECUM/</code></td><td>Sito/blog storytelling AL · questi dossier di onboarding.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 04 -->
+    <section id="onboarding">
+      <div class="sechead"><span class="secnum">04</span><div><h2>Onboarding collaboratore + spiegazione cliente</h2><div class="sub">Come allineare chi arriva nuovo, e come raccontarlo a chi non è tecnico.</div></div></div>
+      <div class="cards">
+        <div class="ocard">
+          <div class="lbl">Collaboratore - primi passi</div>
+          <h4>Da zero a produttivo</h4>
+          <ol>
+            <li>Installa Claude Code e accedi con l'abbonamento: nessuna API key da comprare o custodire.</li>
+            <li>Apri la cartella PROGETTI AI da iCloud: i percorsi sono relativi, funziona uguale su Mac e Windows.</li>
+            <li>Leggi il README del progetto che ti interessa: ognuno spiega il proprio setup passo passo.</li>
+            <li>Prova un progetto in locale (es. Mail Automation con <code>python run.py</code>) prima di toccare i dati veri.</li>
+          </ol>
+        </div>
+        <div class="ocard">
+          <div class="lbl">Collaboratore - cosa deve saper fare</div>
+          <h4>Le competenze minime</h4>
+          <p>Python di base per leggere e lanciare gli script, dimestichezza col terminale, e la capacità di distinguere l'ambiente di test da quello di produzione. Non serve costruire modelli AI: il motore è già Claude Code.</p>
+          <p style="margin-top:10px"><b>Regola d'oro:</b> mai committare segreti. Token e <code>credentials.json</code> stanno solo in <code>secrets/</code> locale, mai nel repo.</p>
+        </div>
+      </div>
+      <div class="pitch">
+        <div class="lbl">Come lo spieghi al cliente (non tecnico)</div>
+        <p>"Usiamo l'intelligenza artificiale come un assistente veloce che prepara il lavoro - bozze di mail, contenuti, preventivi - ma è sempre una persona a controllare e a decidere cosa esce davvero."</p>
+        <p>Ottieni la velocità dell'AI senza perdere il controllo né la qualità: niente va verso l'esterno senza un'approvazione umana.</p>
+      </div>
+      <div class="warn">
+        <div class="lbl">Paletti da spiegare subito</div>
+        <ul>
+          <li><b>Niente invii automatici.</b> Nessuno strumento pubblica o invia senza l'approvazione di una persona.</li>
+          <li><b>Mai segreti nel repo.</b> Token e credenziali restano solo in locale, dentro <code>secrets/</code>.</li>
+          <li><b>Prima il test.</b> Di default si lavora su dati e ambiente di prova, mai in produzione senza richiesta esplicita.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section id="paletti">
+      <div class="sechead"><span class="secnum">05</span><div><h2>Paletti, limiti e stato</h2><div class="sub">Cosa è vero oggi, cosa è ancora da fare.</div></div></div>
+      <div class="grid2">
+        <div>
+          <h3>Da fare più avanti</h3>
+          <table class="tbl">
+            <tbody>
+              <tr><td>Cowork</td><td>In panchina: non serve ora, si valuta se il carico di lavoro cresce.</td></tr>
+              <tr><td>Standardizzazione</td><td>Portare tutti i progetti allo stesso schema di cartelle e README.</td></tr>
+              <tr><td>Vademecum</td><td>Completare il dossier di onboarding per ogni progetto grosso.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <div class="lbl">Stato reale (onesto)</div>
+          <div class="kv">
+            <div class="row"><span class="k">Motore</span><span class="v">Claude Code (abbonamento)</span></div>
+            <div class="row"><span class="k">API key a pagamento</span><span class="v">Nessuna</span></div>
+            <div class="row"><span class="k">Sync Mac ↔ Windows</span><span class="v">iCloud, percorsi relativi</span></div>
+            <div class="row"><span class="k">Progetti mappati</span><span class="v">6 + VADEMECUM</span></div>
+            <div class="row"><span class="k">Cowork</span><span class="v">In panchina</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="pgfoot">
+      <span>Vademecum · Architettura strumenti · documentazione</span>
+      <span class="mono">v0.1 draft · 2026-07-30</span>
+    </footer>
+  </main>
+</div>
+
+
+<script>
+  // evidenzia sezione attiva nella TOC
+  const links=[...document.querySelectorAll('#toc a')];
+  const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  const obs=new IntersectionObserver((es)=>{
+    es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));map.get(e.target.id)?.classList.add('active');}});
+  },{rootMargin:'-45% 0px -50% 0px'});
+  document.querySelectorAll('section,#intro').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

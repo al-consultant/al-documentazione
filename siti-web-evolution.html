@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vademecum - Siti Web Evolution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f1ea;
+    --paper-2:#ebe6db;
+    --ink:#16130f;
+    --ink-2:#4a443b;
+    --ink-3:#7d766a;
+    --line:#d8d1c2;
+    --accent:#b4331f;      /* rosso mattone - un ruolo: marcatori, numeri sezione, stato */
+    --accent-soft:#f0dcd6;
+    --ok:#3f6b3f;
+    --card:#fbf9f4;
+    --radius:4px;
+    --maxw:1200px;
+    font-synthesis:none;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Montserrat",system-ui,sans-serif;
+    font-size:15px;line-height:1.6;
+    text-rendering:optimizeLegibility;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,.025) 1px, transparent 0);
+    background-size:22px 22px;
+  }
+  a{color:inherit}
+  code,.mono{font-family:"IBM Plex Mono",monospace}
+
+  /* ---------- shell: sidebar + main ---------- */
+  .wrap{display:grid;grid-template-columns:248px 1fr;max-width:var(--maxw);margin:0 auto;gap:0}
+  .side{
+    position:sticky;top:0;align-self:start;height:100vh;
+    border-right:1px solid var(--line);
+    padding:34px 26px 34px 30px;
+    display:flex;flex-direction:column;gap:26px;
+    background:linear-gradient(180deg,var(--paper) 0%, var(--paper) 100%);
+  }
+  .brandmark{font-family:"Montserrat",sans-serif;font-weight:900;font-size:20px;line-height:1.05;letter-spacing:-.01em}
+  .brandmark span{color:var(--accent)}
+  .side .kicker{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+  nav.toc{display:flex;flex-direction:column;gap:2px}
+  nav.toc a{
+    display:flex;gap:10px;align-items:baseline;
+    text-decoration:none;color:var(--ink-2);
+    padding:7px 9px;border-radius:var(--radius);font-size:13.5px;font-weight:500;
+    border:1px solid transparent;transition:.15s;
+  }
+  nav.toc a .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600;min-width:16px}
+  nav.toc a:hover{background:var(--paper-2);border-color:var(--line)}
+  nav.toc a.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  nav.toc a.active .n{color:var(--paper)}
+  .side .foot{margin-top:auto;font-size:11px;color:var(--ink-3);line-height:1.5;border-top:1px solid var(--line);padding-top:16px}
+  .side .foot b{color:var(--ink-2);font-weight:600}
+
+  main{padding:0 clamp(28px,5vw,72px) 120px;min-width:0}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:52px 0 30px;border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Montserrat",sans-serif;font-weight:900;font-size:clamp(38px,6vw,62px);line-height:.98;letter-spacing:-.02em;margin:14px 0 16px;text-wrap:balance}
+  .lede{font-size:18px;color:var(--ink-2);max-width:60ch;text-wrap:pretty}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .chip{
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:500;
+    padding:5px 10px;border:1px solid var(--line);border-radius:100px;background:var(--card);color:var(--ink-2);
+    display:inline-flex;gap:7px;align-items:center;
+  }
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .chip.state .dot{background:var(--ok)}
+  .chip b{color:var(--ink);font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  .sechead{display:flex;align-items:baseline;gap:14px;margin-bottom:22px}
+  .secnum{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent);font-weight:600;padding-top:6px}
+  h2{font-family:"Montserrat",sans-serif;font-weight:600;font-size:clamp(24px,3.4vw,34px);line-height:1.05;letter-spacing:-.01em}
+  h2 + .sub{color:var(--ink-3);font-size:13.5px;margin-top:4px}
+  h3{font-family:"Montserrat";font-weight:700;font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink);margin:26px 0 12px;display:flex;align-items:center;gap:9px}
+  h3::before{content:"";width:16px;height:2px;background:var(--accent)}
+  p{max-width:66ch;text-wrap:pretty;margin-bottom:12px}
+  .muted{color:var(--ink-2)}
+  li,td,.step p,.ocard p,.warn li,.note{text-wrap:pretty}
+
+  /* two-col intro */
+  .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:26px;align-items:start}
+  .callout{
+    background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:var(--radius);padding:18px 20px;
+  }
+  .callout .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+  .callout ul{list-style:none;display:flex;flex-direction:column}
+  .callout li{font-size:13px;color:var(--ink-2);padding:11px 0;border-bottom:1px solid var(--line);text-wrap:pretty}
+  .callout li:first-child{padding-top:0}
+  .callout li:last-child{border-bottom:none;padding-bottom:0}
+  .callout li b{display:block;color:var(--ink);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+  /* key/value allineato (stato reale) */
+  .kv{display:flex;flex-direction:column}
+  .kv .row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .kv .row:first-child{padding-top:0}
+  .kv .row:last-child{border-bottom:none;padding-bottom:0}
+  .kv .k{color:var(--ink-2)}
+  .kv .v{font-weight:700;color:var(--ink);text-align:right;text-wrap:pretty}
+
+  /* table (Football Manager density) */
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}
+  .tbl th{
+    text-align:left;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:600;padding:9px 12px;border-bottom:1.5px solid var(--ink)
+  }
+  .tbl td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .tbl tr:hover td{background:var(--card)}
+  .tbl td:first-child{font-weight:600;white-space:nowrap}
+  .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 7px;border-radius:3px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .tag.n{background:var(--paper-2);color:var(--ink-2)}
+
+  /* flow */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:10px 0 4px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+  .step{padding:16px 14px;border-right:1px solid var(--line);position:relative;display:flex;flex-direction:column}
+  .step:last-child{border-right:none}
+  .step .sn{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600}
+  .step h4{font-family:"Montserrat",sans-serif;font-weight:700;font-size:16px;margin:6px 0 6px;letter-spacing:-.01em}
+  .step p{font-size:12px;color:var(--ink-2);margin:0;max-width:none;text-wrap:pretty}
+  .step .cmd{margin-top:auto;font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--ink);color:var(--paper);padding:4px 8px;border-radius:3px;align-self:flex-start;margin-top:14px}
+  .flow .step .cmd{margin-top:auto}
+  .step.manual{background:var(--accent-soft)}
+  .step.manual .sn{color:var(--accent)}
+
+  .note{font-size:12.5px;color:var(--ink-3);margin-top:12px;padding-left:14px;border-left:2px solid var(--line)}
+
+  /* onboarding cards */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .ocard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .ocard .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px}
+  .ocard h4{font-family:"Montserrat",sans-serif;font-weight:600;font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
+  .ocard ol{margin:8px 0 0 18px;font-size:13px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+  .ocard p{font-size:13px;color:var(--ink-2);max-width:none}
+
+  .pitch{background:var(--ink);color:var(--paper);border-radius:var(--radius);padding:24px 26px;margin-top:20px}
+  .pitch .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#e0a99e;font-weight:600;margin-bottom:10px}
+  .pitch p{color:#e8e3d8;font-size:16px;max-width:70ch;font-family:"Montserrat",sans-serif;font-weight:400;line-height:1.5}
+  .pitch p + p{margin-top:10px}
+
+  .warn{background:var(--accent-soft);border:1px solid #e2b8ae;border-radius:var(--radius);padding:16px 18px;margin-top:16px}
+  .warn .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px}
+  .warn ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .warn li{font-size:13px;display:flex;gap:9px;color:var(--ink-2)}
+  .warn li b{color:var(--ink)}
+  .warn li::before{content:"!";font-family:"IBM Plex Mono",monospace;color:var(--accent);font-weight:700}
+
+  footer.pgfoot{padding:32px 0 0;color:var(--ink-3);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .draftflag{position:fixed;bottom:16px;right:16px;background:var(--accent);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;padding:7px 12px;border-radius:100px;letter-spacing:.06em;box-shadow:0 4px 14px rgba(0,0,0,.18);z-index:50}
+
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr}
+    .side{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px;padding:18px 22px}
+    .side .kicker,.side .foot{display:none}
+    nav.toc{flex-direction:row;flex-wrap:wrap;gap:6px}
+    .grid2,.cards{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr 1fr}
+    .step{border-right:none;border-bottom:1px solid var(--line)}
+  }
+  @media (max-width:560px){.flow{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="side">
+    <div>
+      <div class="brandmark">Vade<span>mecum</span></div>
+      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:'IBM Plex Mono',monospace"><a href="index.html" style="text-decoration:none;color:inherit">&larr; tutti i progetti</a></div>
+    </div>
+    <div>
+      <div class="kicker">Sezioni</div>
+      <nav class="toc" id="toc">
+        <a href="#intro" class="active"><span class="n">01</span> In una frase</a>
+        <a href="#stack"><span class="n">02</span> Stack e strumenti</a>
+        <a href="#flusso"><span class="n">03</span> Come funziona</a>
+        <a href="#onboarding"><span class="n">04</span> Onboarding + cliente</a>
+        <a href="#paletti"><span class="n">05</span> Paletti e stato</a>
+      </nav>
+    </div>
+    <div class="foot">
+      <b>Siti Web Evolution</b><br>
+      Ultimo aggiornamento: 30 lug 2026<br>
+      Owner: Tomas &middot; Fonte: repo SITI WEB EVOLUTION
+    </div>
+  </aside>
+  <main>
+    <header class="hero" id="top">
+      <div class="eyebrow">Vademecum &middot; Onboarding collaboratori</div>
+      <h1>Siti Web<br>Evolution</h1>
+      <p class="lede">Landing page per i clienti costruite da un motore di temi: parti da un tema pronto, lo adatti al cliente e ottieni una pagina coerente e veloce.</p>
+      <div class="chips">
+        <span class="chip state"><span class="dot"></span>Stato: <b>in uso</b></span>
+        <span class="chip"><span class="dot"></span>Tipo: <b>landing clienti</b></span>
+        <span class="chip"><span class="dot"></span>Motore: <b>temi</b></span>
+        <span class="chip"><span class="dot"></span>Target: <b>mobile-first</b></span>
+      </div>
+    </header>
+
+    <section id="intro">
+      <div class="sechead"><span class="secnum">01</span><div><h2>In una frase, e a chi serve</h2><div class="sub">Orientarsi in 30 secondi.</div></div></div>
+      <div class="grid2">
+        <div>
+          <p><b>Cos&rsquo;è.</b> Un sistema per fare landing ai clienti: un <code>_motore-landing</code> con temi pronti (ottone, minimale, chiaro) e una cartella per cliente con la pagina finale.</p>
+          <p><b>Il problema che risolve.</b> Rifare ogni landing da zero è lento e incoerente. Qui si parte da un tema e si personalizza: stessa qualità, tempi molto ridotti.</p>
+          <p><b>Perché è fatto così.</b> HTML statico e mobile-first, facile da ospitare. Temi separati dai clienti: aggiornare un tema non tocca le pagine già consegnate.</p>
+        </div>
+        <div class="callout">
+          <div class="lbl">A chi serve</div>
+          <ul>
+            <li><b>Tomas</b>Sforna landing per i clienti partendo da una base già solida.</li>
+            <li><b>Collaboratore</b>Crea un cliente nuovo copiando un tema e cambiando i contenuti.</li>
+            <li><b>Cliente (attività)</b>Ottiene una landing veloce e curata, perfetta da telefono.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section id="stack">
+      <div class="sechead"><span class="secnum">02</span><div><h2>Stack e strumenti</h2><div class="sub">Con cosa è costruito, e perché.</div></div></div>
+      <table class="tbl">
+        <thead><tr><th>Strumento</th><th>Ruolo nel progetto</th><th>Perché scelto</th></tr></thead>
+        <tbody>
+          <tr><td>HTML/CSS statico <span class="tag">frontend</span></td><td>Le landing, una per cliente.</td><td>Mobile-first, hosting semplice.</td></tr>
+          <tr><td><code>_motore-landing/temi/</code> <span class="tag n">temi</span></td><td>tema-ottone, tema-minimale, tema-chiaro.</td><td>Basi riusabili e coerenti.</td></tr>
+          <tr><td><code>anteprima-temi.html</code> <span class="tag n">preview</span></td><td>Confronta i temi in un colpo.</td><td>Scelta rapida col cliente.</td></tr>
+          <tr><td><code>clienti/&lt;Nome&gt;/</code> <span class="tag n">output</span></td><td><code>index.html</code> + assets del cliente.</td><td>Pagine separate dai temi.</td></tr>
+        </tbody>
+      </table>
+      <h3>Temi disponibili</h3>
+      <table class="tbl">
+        <thead><tr><th>Tema</th><th>Mood</th></tr></thead>
+        <tbody>
+          <tr><td><code>tema-ottone</code></td><td>Caldo, premium.</td></tr>
+          <tr><td><code>tema-minimale</code></td><td>Essenziale.</td></tr>
+          <tr><td><code>tema-chiaro</code></td><td>Pulito, luminoso.</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section id="flusso">
+      <div class="sechead"><span class="secnum">03</span><div><h2>Come funziona - il flusso</h2><div class="sub">Il pattern del progetto, passo per passo.</div></div></div>
+      <p class="muted">Da tema scelto a landing online, cliente per cliente.</p>
+      <div class="flow">
+        <div class="step"><div class="sn">01</div><h4>Scegli tema</h4><p>Apri <code>anteprima-temi.html</code> col cliente.</p><span class="cmd">anteprima</span></div>
+        <div class="step"><div class="sn">02</div><h4>Crea cliente</h4><p>Copia il tema in <code>clienti/&lt;Nome&gt;/</code>.</p><span class="cmd">copia</span></div>
+        <div class="step"><div class="sn">03</div><h4>Personalizza</h4><p>Testi, immagini e colori del cliente.</p><span class="cmd">index.html</span></div>
+        <div class="step"><div class="sn">04</div><h4>Verifica</h4><p>Mobile-first, niente overflow, stati.</p><span class="cmd">QA</span></div>
+        <div class="step manual"><div class="sn">05</div><h4>Pubblica</h4><p>Deploy statico (es. GitHub Pages).</p><span class="cmd">manuale</span></div>
+      </div>
+      <div class="note"><b>Regola chiave.</b> Aggiornare un tema non modifica le landing già consegnate: ogni cliente ha la sua copia del tema.</div>
+      <h3>Dove finiscono le cose</h3>
+      <table class="tbl">
+        <thead><tr><th>Cartella / file</th><th>Contenuto</th></tr></thead>
+        <tbody>
+          <tr><td><code>_motore-landing/temi/</code></td><td>I temi base.</td></tr>
+          <tr><td><code>_motore-landing/anteprima-temi.html</code></td><td>Confronto dei temi.</td></tr>
+          <tr><td><code>clienti/&lt;Nome&gt;/</code></td><td>La landing del cliente.</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section id="onboarding">
+      <div class="sechead"><span class="secnum">04</span><div><h2>Onboarding collaboratore + spiegazione cliente</h2><div class="sub">Allineare chi arriva, e raccontarlo a chi non è tecnico.</div></div></div>
+      <div class="cards">
+        <div class="ocard">
+          <div class="lbl">Collaboratore - primi passi</div>
+          <h4>Da zero a produttivo</h4>
+          <ol>
+            <li>Apri <code>_motore-landing/anteprima-temi.html</code> per vedere i temi.</li>
+            <li>Copia il tema scelto in <code>clienti/&lt;Nome&gt;/</code>.</li>
+            <li>Cambia testi e immagini nell&rsquo;<code>index.html</code> del cliente.</li>
+            <li>Controlla il mobile-first, poi pubblica.</li>
+          </ol>
+        </div>
+        <div class="ocard">
+          <div class="lbl">Collaboratore - cosa deve saper fare</div>
+          <h4>Le competenze minime</h4>
+          <p>HTML/CSS e occhio al mobile-first (tap target &ge;44px). Nessun framework né build.</p>
+          <p style="margin-top:10px"><b>Regola d'oro:</b> ogni cliente ha la SUA copia del tema: non collegare più clienti allo stesso file, o una modifica li tocca tutti.</p>
+        </div>
+      </div>
+      <div class="pitch">
+        <div class="lbl">Come lo spieghi al cliente (non tecnico)</div>
+        <p>&laquo;La tua landing nasce da una base già curata e collaudata, poi la vestiamo sui tuoi contenuti. Veloce da mettere online e perfetta da telefono.&raquo;</p>
+        <p>Mobile-first: la maggior parte dei visitatori arriva da smartphone.</p>
+      </div>
+      <div class="warn">
+        <div class="lbl">Paletti da spiegare subito</div>
+        <ul>
+          <li><b>Mobile-first sempre:</b> è da lì che arriva la maggior parte dei clienti.</li>
+          <li><b>Una copia per cliente:</b> niente file di tema condiviso tra più clienti.</li>
+          <li><b>Niente overflow orizzontale:</b> i contenuti larghi scrollano nel loro box.</li>
+        </ul>
+      </div>
+    </section>
+    <section id="paletti">
+      <div class="sechead"><span class="secnum">05</span><div><h2>Paletti, limiti e stato</h2><div class="sub">Cosa è vero oggi, cosa manca.</div></div></div>
+      <div class="grid2">
+        <div>
+          <h3>Da fare più avanti</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td>Nuovi temi</td><td>Ampliare la libreria dei temi.</td></tr>
+          <tr><td>Form / lead</td><td>Collegare i contatti a un backend.</td></tr>
+        </tbody>
+      </table>
+        </div>
+        <div class="callout">
+          <div class="lbl">Stato reale (onesto)</div>
+          <div class="kv">
+            <div class="row"><span class="k">Tipo</span><span class="v">Landing clienti</span></div>
+            <div class="row"><span class="k">Temi</span><span class="v">ottone &middot; minimale &middot; chiaro</span></div>
+            <div class="row"><span class="k">Target</span><span class="v">Mobile-first</span></div>
+            <div class="row"><span class="k">Clienti attivi</span><span class="v">Business AL &middot; Ai Do Mori</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="pgfoot">
+      <span>Vademecum &middot; Siti Web Evolution</span>
+      <span class="mono">v1.0 &middot; 2026-07-30</span>
+    </footer>
+  </main>
+</div>
+<script>
+  const links=[...document.querySelectorAll("#toc a")];
+  const map=new Map(links.map(a=>[a.getAttribute("href").slice(1),a]));
+  const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove("active"));map.get(e.target.id)&&map.get(e.target.id).classList.add("active");}});},{rootMargin:"-45% 0px -50% 0px"});
+  document.querySelectorAll("section,#intro").forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
