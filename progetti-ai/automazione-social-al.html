@@ -6,7 +6,7 @@
 <title>Vademecum - Automazione Social AL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/styles.css">
 </head>
 <body>
@@ -16,14 +16,14 @@
   <aside class="side">
     <div>
       <div class="brandmark">Vade<span>mecum</span></div>
-      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:'IBM Plex Mono',monospace"><a href="index.html" style="text-decoration:none;color:inherit">&larr; tutti i progetti</a></div>
+      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:'Montserrat',sans-serif"><a href="index.html" style="text-decoration:none;color:inherit">&larr; tutti i progetti</a></div>
     </div>
     <div>
       <div class="kicker">Sezioni</div>
       <nav class="toc" id="toc">
         <a href="#intro" class="active"><span class="n">01</span> In una frase</a>
         <a href="#stack"><span class="n">02</span> Stack e strumenti</a>
-        <a href="#flusso"><span class="n">03</span> Come funziona</a>
+        <a href="#flusso"><span class="n">03</span> Come funziona + passo passo</a>
         <a href="#onboarding"><span class="n">04</span> Onboarding + cliente</a>
         <a href="#paletti"><span class="n">05</span> Paletti e stato</a>
       </nav>
@@ -106,6 +106,20 @@
         <div class="step manual"><div class="sn">05</div><h4>Approva &amp; carica</h4><p>Tomas/cliente rilegge, approva e carica a mano su Instagram.</p><span class="cmd">manuale</span></div>
       </div>
       <div class="note"><b>Regola chiave.</b> Le skill non hanno un tono proprio: leggono SOLO <code>profilo.md</code> + <code>voice.md</code> del cliente passato come argomento. <code>/settimana-social pizzeria-mario</code> è diverso da <code>/settimana-social studio-rossi</code> perché legge cartelle diverse, non perché la skill "sa" qualcosa di loro.</div>
+
+      <h3>Passo-passo: gestire un post da Notion</h3>
+      <p class="muted">Per chi non l&rsquo;ha mai fatto: ogni clic, nell&rsquo;ordine. Il tuo lavoro finisce quando spunti <b>Approvato</b>; le slide e la caption le prepara il sistema.</p>
+      <ol class="howto">
+        <li><span class="ht-t"><span class="ht-b">Apri Notion e vai al comando</span>Apri Notion (app o <code>notion.so</code>). Nella barra laterale a sinistra apri la pagina <span class="path">AL Consultant - Comando</span>: è il centro da cui si gestisce tutto.</span></li>
+        <li><span class="ht-t"><span class="ht-b">Entra nella tabella dei post</span>Dentro Comando apri <span class="path">Contenuti Social</span>. È la tabella dove <b>una riga = un post</b>.</span></li>
+        <li><span class="ht-t"><span class="ht-b">Crea una riga nuova</span>In fondo alla tabella clicca <code>+ Nuovo</code> (in inglese <code>New</code>). Si apre una riga vuota: quello è il tuo nuovo post.</span></li>
+        <li><span class="ht-t"><span class="ht-b">Scegli il Tipo e scrivi l&rsquo;Idea</span>Nel campo <span class="path">Tipo</span> scegli il formato (Percorso/Carosello, Epigrafe, Riflessione). Nel campo <span class="path">Idea</span> scrivi <b>una frase sola</b>: l&rsquo;angolo del post, non solo il tema. Lascia <span class="path">Stato</span> su <i>Da fare</i> e chiudi: la tua parte iniziale è finita.</span></li>
+        <li><span class="ht-t"><span class="ht-b">Aspetta la bozza</span>Il sistema prepara slide, testo, caption e hashtag. Quando è pronta lo <span class="path">Stato</span> diventa <i>Bozza pronta</i>. <span class="who sys">lo fa il sistema</span></span></li>
+        <li><span class="ht-t"><span class="ht-b">Apri la riga e rileggi</span>Clicca sul titolo della riga (o <code>Apri</code>): la bozza si apre a tutta pagina. Leggila tutta, slide e testo.</span></li>
+        <li><span class="ht-t"><span class="ht-b">Approva, o rimanda indietro</span>Se ti convince, spunta la casella <span class="path">Approvato</span>. Se qualcosa non va, <b>non</b> spuntarla: scrivi cosa cambiare nel campo <span class="path">Note</span> e rimetti <span class="path">Stato</span> su <i>In lavorazione</i>.</span></li>
+        <li><span class="ht-t"><span class="ht-b">Carica su Instagram</span>Nel giorno della colonna <span class="path">Data pubblicazione</span> il post approvato va caricato su Instagram, poi lo Stato passa a <i>Pubblicato</i>. <span class="who">a mano dal team</span> <br>Oggi l&rsquo;ultimo caricamento su Instagram è <b>manuale</b> di proposito: nulla va online senza che una persona lo carichi. Vedi <b>Stato reale</b> più sotto.</span></li>
+      </ol>
+
       <h3>Dove finiscono le cose</h3>
       <table class="tbl">
         <thead><tr><th>Cartella</th><th>Contenuto</th></tr></thead>

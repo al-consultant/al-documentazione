@@ -42,10 +42,41 @@ for f in "${files[@]}"; do
     --template-button "Entra" \
     --template-placeholder "Password" \
     --template-error "Password errata" \
-    --template-color-primary "#b4331f" \
-    --template-color-secondary "#f4efe6" >/dev/null
+    --template-color-primary "#111111" \
+    --template-color-secondary "#ffffff" >/dev/null
   echo "     cifrato: $(basename "$f")"
 done
+
+# StatiCrypt non ha flag per font/maiuscolo: li re-iniettiamo qui, cosi ogni
+# ri-cifratura mantiene il look (Montserrat, titolo maiuscolo su due righe,
+# bottone nero). Sono override in fondo al <head>, indipendenti dallo spazio.
+echo "     rifinisco il look del pop-up (Montserrat, maiuscolo, bottone nero)..."
+python3 - <<'PY'
+import glob, re
+MARK = "<!-- al-look -->"
+STYLE = MARK + """
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+.staticrypt-content,.staticrypt-form,.staticrypt-form input,.staticrypt-form .staticrypt-decrypt-button,.staticrypt-title{font-family:"Montserrat",sans-serif !important;}
+.staticrypt-content{background:#ffffff !important;}
+.staticrypt-title{font-weight:800;text-transform:uppercase;letter-spacing:.01em;line-height:1.1;}
+.staticrypt-form .staticrypt-decrypt-button,.staticrypt-form .staticrypt-decrypt-button:hover,.staticrypt-form .staticrypt-decrypt-button:active,.staticrypt-form .staticrypt-decrypt-button:focus{background:#111111 !important;}
+</style>
+"""
+for path in glob.glob("servizi-al-consultant/*.html"):
+    html = open(path, encoding="utf-8").read()
+    if MARK not in html:
+        html = html.replace("</head>", STYLE + "</head>", 1)
+    # titolo del pop-up: tolgo il "-" e vado a capo (solo nel <p>, non nel <title>)
+    html = html.replace(
+        'staticrypt-title">Servizi AL Consultant - Area riservata',
+        'staticrypt-title">Servizi AL Consultant<br>Area riservata',
+    )
+    open(path, "w", encoding="utf-8").write(html)
+    print("     rifinito:", path)
+PY
 
 unset STATICRYPT_PASSWORD
 echo

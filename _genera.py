@@ -506,6 +506,25 @@ P.append(dict(
                 ("Formula", "1.200 + 790/mese + 10% + 8%"), ("Prezzi", "Nel deck")]),
     }))
 
+# ============================ SERVIZI AL CONSULTANT ============================
+# Dati RISERVATI: NON stanno qui (finirebbero sul repo pubblico in chiaro).
+# Vivono in _sorgenti-servizi/_dati-servizi.py, GITIGNORED, caricato solo se
+# presente (in locale). Su un clone pubblico il file manca: la sezione resta
+# "in preparazione" e nessun contenuto riservato viene esposto.
+SERVIZI_ITEMS = []
+_dati_srv = SRC_PROT / "_dati-servizi.py"
+if _dati_srv.exists():
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location("_dati_servizi", _dati_srv)
+    _mod = _ilu.module_from_spec(_spec)
+    _spec.loader.exec_module(_mod)  # se il file c'e' ma e' rotto l'errore esce forte
+    _svc, SERVIZI_ITEMS = _mod.build(globals())
+    P.extend(_svc)
+    print("caricati", len(_svc), "dossier servizi (riservati, solo locale)")
+else:
+    print("nessun dato servizi in locale: sezione Servizi in preparazione")
+
+
 # ---- scrivi i file ----
 # Un dossier con p["protected"]=True (es. un servizio AL) va in _sorgenti-servizi/
 # e verra cifrato; gli altri in progetti-ai/, in chiaro.
@@ -529,7 +548,9 @@ CATS = [
         ("siti-web-evolution.html", "Siti Web Evolution", "Landing per clienti da un motore di temi, mobile-first.", "in uso"),
         ("storytelling-altra-parte.html", "Storytelling - l'altra parte", "Sito e blog l'altra parte per AL, con build da script.", "in uso"),
     ], False),
-    ("Servizi AL Consultant", "servizi-al-consultant", "I servizi dedicati ad A.L. Consultant. Prima area in preparazione.", [], True),
+    # Gli item servizi arrivano da _dati-servizi.py (gitignored). Se non c'e',
+    # SERVIZI_ITEMS resta [] e la categoria appare "in preparazione".
+    ("Servizi AL Consultant", "servizi-al-consultant", "Le procedure operative interne: come si fanno i lavori per i clienti, strumento per strumento. Area riservata.", SERVIZI_ITEMS, True),
 ]
 
 def _head(title, prefix=""):
@@ -557,7 +578,10 @@ def home_page():
     cards = ""
     for name, slug, desc, items, prot in CATS:
         count = (str(len(items)) + " progetti") if items else "in arrivo"
-        if items:
+        if items and prot:
+            # Categoria riservata: niente nomi in chiaro sulla home pubblica.
+            pills = '<span class="pill">contenuto riservato</span>'
+        elif items:
             pills = "".join('<span class="pill">' + n + "</span>" for _, n, _, _ in items)
         else:
             pills = '<span class="pill empty">in preparazione</span>'
