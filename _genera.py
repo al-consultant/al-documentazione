@@ -11,14 +11,18 @@ import re
 import pathlib
 
 BASE = pathlib.Path(__file__).parent
-# Cartelle del repo:
-#  - progetti-ai/       dossier Progetti AI (in chiaro, pubblici)
-#  - _sorgenti-servizi/ pagine servizi in chiaro, GITIGNORED, da cifrare
-#  - assets/            styles.css condiviso
-PROG = BASE / "progetti-ai"
+# Cartelle del repo. Ora ENTRAMBE le aree sono protette: il testo in chiaro
+# vive solo nelle cartelle sorgente (GITIGNORED, mai sul repo); online vanno
+# solo i file cifrati da cifra.sh. La home resta pubblica in root.
+#  - _sorgenti-progetti/ pagine Progetti AI in chiaro  -> cifrate in progetti-ai/
+#  - _sorgenti-servizi/  pagine Servizi in chiaro      -> cifrate in servizi-al-consultant/
+#  - assets/             styles.css condiviso (pubblico, non e' segreto)
+# SRCDIR: dato lo slug categoria, dice in quale cartella sorgente scrivere.
+SRC_PUB = BASE / "_sorgenti-progetti"
 SRC_PROT = BASE / "_sorgenti-servizi"
 ASSETS = BASE / "assets"
-for _d in (PROG, SRC_PROT, ASSETS):
+SRCDIR = {"progetti-ai": SRC_PUB, "servizi-al-consultant": SRC_PROT}
+for _d in (SRC_PUB, SRC_PROT, ASSETS):
     _d.mkdir(exist_ok=True)
 
 
@@ -526,12 +530,13 @@ else:
 
 
 # ---- scrivi i file ----
-# Un dossier con p["protected"]=True (es. un servizio AL) va in _sorgenti-servizi/
-# e verra cifrato; gli altri in progetti-ai/, in chiaro.
+# Tutti i dossier vanno in una cartella sorgente GITIGNORED e verranno cifrati.
+# p["protected"]=True identifica i servizi (area riservata AL); gli altri sono
+# Progetti AI. Entrambe le aree finiscono cifrate, solo in cartelle diverse.
 for p in P:
-    dest = SRC_PROT if p.get("protected") else PROG
+    dest = SRC_PROT if p.get("protected") else SRC_PUB
     (dest / (p["slug"] + ".html")).write_text(fix(page(p)), encoding="utf-8")
-    print("scritto", ("_sorgenti-servizi/" if p.get("protected") else "progetti-ai/") + p["slug"] + ".html")
+    print("scritto", dest.name + "/" + p["slug"] + ".html")
 
 # ---- HUB A DUE LIVELLI ----
 # Home = 2 card categoria. Ogni categoria ha una pagina sua con i suoi dossier.
@@ -547,7 +552,7 @@ CATS = [
         ("configuratore-vernici.html", "Configuratore Vernici", "Dal linguaggio naturale a un carrello di prodotti, col perche.", "demo"),
         ("siti-web-evolution.html", "Siti Web Evolution", "Landing per clienti da un motore di temi, mobile-first.", "in uso"),
         ("storytelling-altra-parte.html", "Storytelling - l'altra parte", "Sito e blog l'altra parte per AL, con build da script.", "in uso"),
-    ], False),
+    ], True),
     # Gli item servizi arrivano da _dati-servizi.py (gitignored). Se non c'e',
     # SERVIZI_ITEMS resta [] e la categoria appare "in preparazione".
     ("Servizi AL Consultant", "servizi-al-consultant", "Le procedure operative interne: come si fanno i lavori per i clienti, strumento per strumento. Area riservata.", SERVIZI_ITEMS, True),
@@ -610,9 +615,9 @@ def subpage(name, slug, desc, items):
 
 (BASE / "index.html").write_text(fix(home_page()), encoding="utf-8")
 print("scritto index.html (home) con", len(CATS), "categorie")
-# L'elenco di ogni categoria e' l'index.html dentro la sua cartella.
+# L'elenco di ogni categoria e' l'index.html dentro la sua cartella sorgente
+# (GITIGNORED). Verra' cifrato da cifra.sh nella cartella pubblica omonima.
 for name, slug, desc, items, prot in CATS:
-    dest = SRC_PROT if prot else PROG
+    dest = SRCDIR[slug]
     (dest / "index.html").write_text(fix(subpage(name, slug, desc, items)), encoding="utf-8")
-    dove = "_sorgenti-servizi (da cifrare)" if prot else slug + "/"
-    print("scritto", dove + "index.html -", len(items), "progetti")
+    print("scritto", dest.name + "/index.html (da cifrare) -", len(items), "progetti")
