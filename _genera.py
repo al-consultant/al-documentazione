@@ -42,7 +42,7 @@ SEC_IDS = {1: "intro", 2: "stack", 3: "flusso", 4: "onboarding", 5: "paletti"}
 
 NAV = ('<a href="#intro" class="active"><span class="n">01</span> In una frase</a>\n'
        '        <a href="#stack"><span class="n">02</span> Stack e strumenti</a>\n'
-       '        <a href="#flusso"><span class="n">03</span> Come funziona</a>\n'
+       '        <a href="#flusso"><span class="n">03</span> Come funziona + passo passo</a>\n'
        '        <a href="#onboarding"><span class="n">04</span> Onboarding + cliente</a>\n'
        '        <a href="#paletti"><span class="n">05</span> Paletti e stato</a>')
 
@@ -55,7 +55,7 @@ SCRIPT = ('<script>\n'
 
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-         '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">\n')
+         '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">\n')
 
 
 def chips(items):
@@ -89,6 +89,18 @@ def flow(steps):
         out += ('        <div class="' + cls + '"><div class="sn">' + num + '</div><h4>' + tit +
                 '</h4><p>' + txt + '</p><span class="cmd">' + cmd + '</span></div>\n')
     return out + "      </div>"
+
+
+def howto(titolo, intro, steps):
+    # Blocco "Passo-passo" per chi opera per la prima volta: ogni clic in ordine.
+    # steps: lista di (titolo_passo, corpo_html). Il corpo puo contenere span
+    # inline gia pronti: <span class="path">campo</span>, <span class="who">a mano
+    # dal team</span>, <span class="who sys">lo fa il sistema</span>.
+    lis = ""
+    for t, c in steps:
+        lis += '        <li><span class="ht-t"><span class="ht-b">' + t + "</span>" + c + "</span></li>\n"
+    return (h3("Passo-passo: " + titolo) + '\n      <p class="muted">' + intro + "</p>\n"
+            '      <ol class="howto">\n' + lis + "      </ol>")
 
 
 def table(head, rows):
@@ -147,7 +159,7 @@ def page(p):
     s.append(FONTS)
     s.append(stylesheet("../") + '</head>\n<body>\n<div class="wrap">\n')
     s.append('  <aside class="side">\n    <div>\n      <div class="brandmark">Vade<span>mecum</span></div>\n')
-    s.append('      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:\'IBM Plex Mono\',monospace"><a href="index.html" style="text-decoration:none;color:inherit">&larr; tutti i progetti</a></div>\n    </div>\n')
+    s.append('      <div style="font-size:11.5px;color:var(--ink-3);margin-top:6px;font-family:\'Montserrat\',sans-serif"><a href="index.html" style="text-decoration:none;color:inherit">&larr; tutti i progetti</a></div>\n    </div>\n')
     s.append('    <div>\n      <div class="kicker">Sezioni</div>\n      <nav class="toc" id="toc">\n        ' + NAV + "\n      </nav>\n    </div>\n")
     s.append('    <div class="foot">\n      <b>' + p["name"] + "</b><br>\n      Ultimo aggiornamento: 30 lug 2026<br>\n      Owner: Tomas &middot; " + p["fonte"] + "\n    </div>\n  </aside>\n")
     s.append('  <main>\n    <header class="hero" id="top">\n      <div class="eyebrow">Vademecum &middot; Onboarding collaboratori</div>\n')
@@ -207,11 +219,26 @@ _PHRASE = [
 ]
 
 
+# Entita HTML tipografiche -> carattere reale "pulito" (rende identico nel
+# browser, ma tiene i sorgenti leggibili). NON tocco quelle che DEVONO restare
+# codificate: &lt; &gt; &amp; (letterali dentro <code>), &nbsp; (spazio unificatore
+# anti-orfane) e &larr; (freccia back della sidebar, come nei dossier a mano).
+_ENT = {
+    "&rsquo;": "’", "&lsquo;": "‘",
+    "&ldquo;": "“", "&rdquo;": "”",
+    "&laquo;": "«", "&raquo;": "»",
+    "&middot;": "·", "&rarr;": "→",
+    "&euro;": "€", "&ge;": "≥", "&le;": "≤",
+}
+
+
 def fix(html):
     for pat, rep in _WORD.items():
         html = re.sub(pat, rep, html)
     for a, b in _PHRASE:
         html = html.replace(a, b)
+    for ent, ch in _ENT.items():
+        html = html.replace(ent, ch)
     return html
 
 
@@ -249,6 +276,14 @@ P.append(dict(
                   ("04", "Scrivi bozza", "Claude scrive la risposta nel tuo stile e la salva in Gmail.", "claude -p", False),
                   ("05", "Invia", "Apri Gmail &gt; Bozze, controlli e invii a mano.", "manuale", True)]) + "\n" +
             note("<b>Regola chiave.</b> Idempotenza: gli id gia lavorati stanno in <code>processed.json</code>, quindi rilanciare <code>run.py</code> non crea bozze doppie.") + "\n" +
+            howto("preparare le bozze del giorno", "Per chi non l&rsquo;ha mai fatto: dal terminale alle bozze pronte in Gmail. Il primo blocco si fa una volta sola; dal punto 4 in poi e la routine di ogni volta.", [
+                ("Ambiente, una volta sola", "Apri il terminale nella cartella del progetto. Crea l&rsquo;ambiente e installa: <code>python -m venv .venv</code>, attivalo, poi <code>pip install -r requirements.txt</code>."),
+                ("Credenziali Google, una volta sola", "Su Google Cloud abilita la <b>Gmail API</b> e scarica il file <code>credentials.json</code>. Mettilo nella cartella <span class=\"path\">secrets/</span>: resta solo sul tuo computer, mai nel repo."),
+                ("Impara il tuo stile", "Lancia <code>python learn_style.py</code>. Si apre il browser per il login Google (una volta): dai il consenso. Lo script legge le tue mail inviate e scrive <span class=\"path\">data/style_profile.md</span>. <span class=\"who sys\">lo fa lo script</span>"),
+                ("Prepara le bozze", "Lancia <code>python run.py</code>. Legge le mail non lette (salta newsletter e notifiche) e per ognuna scrive una bozza di risposta nel tuo stile, salvandola dentro Gmail. <span class=\"who sys\">lo fa lo script</span>"),
+                ("Apri Gmail e vai in Bozze", "Apri Gmail e clicca <span class=\"path\">Bozze</span> nella barra a sinistra: trovi le risposte gia scritte, una per mail."),
+                ("Rileggi e invia tu", "Apri ogni bozza, correggi se serve e premi <b>Invia</b>. Niente parte da solo: l&rsquo;invio e sempre un tuo clic. <span class=\"who\">a mano</span>"),
+            ]) + "\n" +
             h3("Dove finiscono le cose") + "\n" + table(["Cartella / file", "Contenuto"], [
                 ["<code>core/</code>", "La logica dello script."],
                 ["<code>data/</code>", "<code>style_profile.md</code> + <code>processed.json</code>."],
@@ -308,6 +343,14 @@ P.append(dict(
                   ("04", "Carrello", "<code>app.js</code> mostra le righe con il perche di ognuna.", "app.js", False),
                   ("05", "Ordine", "Il carrello va rivisto e confermato da una persona.", "manuale", True)]) + "\n" +
             note("<b>Regola chiave.</b> Il contratto JSON e fisso: passare dal motore offline a Claude API non cambia la UI ne il catalogo. E anche l&rsquo;upsell verso il cliente.") + "\n" +
+            howto("avviare e provare la demo", "Per chi non l&rsquo;ha mai fatto: la demo gira in locale con un mini-server (i browser bloccano l&rsquo;apertura diretta del file). Ogni passo in ordine.", [
+                ("Apri il terminale nella cartella", "Vai nella cartella del tool: <code>cd tool-vernici</code>."),
+                ("Avvia il mini-server", "Lancia <code>python3 -m http.server 8770</code>. Lascia questa finestra aperta: e il server che serve la pagina."),
+                ("Apri la pagina nel browser", "Vai su <span class=\"path\">localhost:8770</span>. Si apre il configuratore."),
+                ("Scrivi la richiesta a parole", "Nel campo di testo descrivi il lavoro come farebbe un cliente, es. <span class=\"path\">bagno 3x4, due mani, termosifoni</span>."),
+                ("Leggi il carrello", "Il tool mostra le righe con prodotto, quantita e il <b>perche</b> di ognuna. <span class=\"who sys\">lo fa il motore</span>"),
+                ("Confermato da una persona", "Il carrello e una proposta: va sempre riletto e confermato prima di trasformarlo in un ordine vero. <span class=\"who\">a mano</span>"),
+            ]) + "\n" +
             h3("Dove finiscono le cose") + "\n" + table(["Cartella", "Contenuto"], [
                 ["<code>src/</code>", "catalogo, motore, app."],
                 ["<code>test/</code>", "18 test (node --test)."],
@@ -367,6 +410,13 @@ P.append(dict(
                   ("04", "Copertina", "Sostituisci la copertina segnaposto con la foto vera.", "manuale", True),
                   ("05", "Pubblica", "Commit e deploy del sito statico.", "manuale", True)]) + "\n" +
             note("<b>Regola chiave.</b> Non spostare le cartelle gia pubblicate in <code>social/</code>: i link diretti sono usati da Notion e Instagram, spostarli li rompe.") + "\n" +
+            howto("pubblicare un nuovo articolo", "Per chi non l&rsquo;ha mai fatto: dal testo alla puntata online. Lo script fa il lavoro pesante (impagina e aggiorna la home); a te restano testo, copertina e pubblicazione.", [
+                ("Scrivi il testo in un file .md", "Crea un file <code>bozza.md</code> con l&rsquo;intestazione richiesta (trovi un esempio dentro <code>tools/nuovo-articolo.py</code>). Scrivi li l&rsquo;articolo."),
+                ("Lancia lo script", "Dal terminale: <code>python3 tools/nuovo-articolo.py bozza.md</code>. Crea la cartella <span class=\"path\">blog/NN-slug/</span> gia impaginata. <span class=\"who sys\">lo fa lo script</span>"),
+                ("Controlla la home", "La lista degli articoli in home si aggiorna da sola leggendo i <code>meta.json</code>: apri la home e verifica che la nuova puntata sia in cima. <span class=\"who sys\">lo fa lo script</span>"),
+                ("Metti la copertina vera", "Nella cartella dell&rsquo;articolo sostituisci <code>copertina.jpg</code> segnaposto con la foto definitiva. <span class=\"who\">a mano</span>"),
+                ("Pubblica", "Fai <code>commit</code> e <code>deploy</code> del sito statico. Da questo momento la puntata e online. <span class=\"who\">a mano</span>"),
+            ]) + "\n" +
             h3("Dove finiscono le cose") + "\n" + table(["Cartella", "Contenuto"], [
                 ["<code>index.html</code>", "La home (generata dagli script)."],
                 ["<code>blog/</code>", "Un articolo per cartella <code>NN-slug</code>."],
@@ -426,6 +476,13 @@ P.append(dict(
                   ("04", "Verifica", "Mobile-first, niente overflow, stati.", "QA", False),
                   ("05", "Pubblica", "Deploy statico (es. GitHub Pages).", "manuale", True)]) + "\n" +
             note("<b>Regola chiave.</b> Aggiornare un tema non modifica le landing gia consegnate: ogni cliente ha la sua copia del tema.") + "\n" +
+            howto("creare la landing di un cliente", "Per chi non l&rsquo;ha mai fatto: da tema scelto a pagina online. L&rsquo;idea chiave: ogni cliente parte da una <b>copia</b> del tema, cosi resta indipendente.", [
+                ("Scegli il tema col cliente", "Apri <code>_motore-landing/anteprima-temi.html</code>: mostra i temi affiancati (ottone, minimale, chiaro). Decidete insieme quale."),
+                ("Copia il tema per il cliente", "Copia la cartella del tema scelto dentro <span class=\"path\">clienti/&lt;Nome&gt;/</span>. Questa e la landing di quel cliente, staccata dagli altri."),
+                ("Personalizza i contenuti", "Nell&rsquo;<code>index.html</code> del cliente cambia testi, immagini e colori con quelli suoi. <span class=\"who\">a mano</span>"),
+                ("Verifica da telefono", "Controlla il <b>mobile-first</b>: niente scroll orizzontale, tap target grandi, tutto leggibile su schermo piccolo. <span class=\"who\">a mano</span>"),
+                ("Pubblica", "Deploy statico (es. GitHub Pages): la landing va online. <span class=\"who\">a mano</span>"),
+            ]) + "\n" +
             h3("Dove finiscono le cose") + "\n" + table(["Cartella / file", "Contenuto"], [
                 ["<code>_motore-landing/temi/</code>", "I temi base."],
                 ["<code>_motore-landing/anteprima-temi.html</code>", "Confronto dei temi."],
@@ -484,6 +541,14 @@ P.append(dict(
                   ("04", "Deck", "Impagina in HTML sfogliabile.", "index.html", False),
                   ("05", "Presenta", "Invii il link e presenti al cliente.", "manuale", True)]) + "\n" +
             note("<b>Regola chiave.</b> I prezzi si decidono con il cliente: qui e documentato il caso Food Lab, non un listino fisso.") + "\n" +
+            howto("preparare una nuova proposta", "Per chi non l&rsquo;ha mai fatto: si parte da un deck gia fatto (Food Lab) e lo si adatta al nuovo cliente. Le cifre non si inventano: si confermano prima di mandare.", [
+                ("Apri il deck di esempio", "Apri <code>Food Lab Experience/index.html</code> nel browser: e il formato sfogliabile da cui partire."),
+                ("Leggi l&rsquo;argomentario", "Apri lo <span class=\"path\">Script Proposta (.rtf)</span>: spiega come e strutturata la proposta e il tono da tenere."),
+                ("Duplica la cartella", "Copia l&rsquo;intera cartella e rinominala per il nuovo cliente: cosi il caso Food Lab resta intatto."),
+                ("Cambia testi e cifre", "Nell&rsquo;<code>index.html</code> aggiorna i contenuti e applica la formula concordata (fisso + canone + quote). <span class=\"who\">a mano</span>"),
+                ("Conferma i prezzi col cliente", "Prima di inviare, fatti confermare le cifre: un preventivo con numeri sbagliati e un problema. <span class=\"who\">a mano</span>"),
+                ("Manda il link e presenta", "Invii il link della pagina e la presenti: e una proposta, non un contratto. <span class=\"who\">a mano</span>"),
+            ]) + "\n" +
             h3("Dove finiscono le cose") + "\n" + table(["File", "Contenuto"], [
                 ["<code>Food Lab Experience/index.html</code>", "Il deck sfogliabile."],
                 ["<code>Food Lab Experience/Script Proposta ....rtf</code>", "Il testo della proposta."],
