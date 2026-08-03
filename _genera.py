@@ -575,6 +575,88 @@ P.append(dict(
                 ("Formula", "1.200 + 790/mese + 10% + 8%"), ("Prezzi", "Nel deck")]),
     }))
 
+# ---- COME USIAMO GITHUB ----
+P.append(dict(
+    name="Come usiamo GitHub", slug="come-usiamo-github", fonte="Fonte: org al-consultant",
+    h1="Come usiamo<br>GitHub",
+    lede="GitHub è dove vivono il codice e i siti dei progetti: una copia online con tutta la storia delle modifiche, condivisa tra chi lavora. Non è l&rsquo;hosting: i siti vanno online sul nostro server. Qui c&rsquo;è come lo usiamo noi, senza fronzoli.",
+    chips=[("Stato", "riferimento"), ("Tipo", "guida di metodo"), ("Org", "al-consultant"), ("Flusso", "commit su main")],
+    sec={
+        1: sec1(
+            ["<b>Cos&rsquo;è.</b> GitHub è una copia online dei progetti con la loro storia. Sotto c&rsquo;è <b>git</b>, che sul tuo computer tiene traccia di ogni modifica; GitHub la mette online e la fa condividere. Un progetto = un <b>repository</b> (repo): es. <code>alblog</code>, <code>al-documentazione</code>.",
+             "<b>Il problema che risolve.</b> Lavorare in due sugli stessi file senza sovrascriversi, e poter <b>tornare indietro</b> se qualcosa si rompe. Ogni salvataggio (<b>commit</b>) è un punto nella storia a cui puoi tornare.",
+             "<b>Perche è fatto cosi da noi.</b> GitHub è la fonte unica e il posto della collaborazione, <b>non</b> l&rsquo;hosting. I repo stanno sotto l&rsquo;organizzazione <code>al-consultant</code>; siamo in due, quindi si committa dritto sul ramo <code>main</code>, senza giri."],
+            [("Tomas", "Tiene tutto in un posto solo, con la storia completa, e condivide il lavoro col collaboratore."),
+             ("Collaboratore", "Scarica il repo, lavora sul suo computer e ricarica: senza mandarsi file per mail."),
+             ("Uso interno", "È il metodo comune a tutti i repo dell&rsquo;org, non un progetto a sé.")]),
+        2: (table(["Concetto", "Cos&rsquo;è", "Perche conta"], [
+                ['Repository (repo) <span class="tag">base</span>', "La cartella del progetto con tutta la sua storia.", "Un repo per progetto."],
+                ['Commit <span class="tag n">salvataggio</span>', "Un salvataggio con un messaggio che dice cosa hai cambiato.", "È il punto a cui puoi tornare."],
+                ['Ramo <code>main</code> <span class="tag n">linea</span>', "La linea principale del progetto.", "Da noi si lavora qui direttamente."],
+                ['Push / Pull <span class="tag n">sincronia</span>', "Push manda i tuoi commit su GitHub, pull scarica quelli degli altri.", "Tiene allineate le due copie."],
+                ['<code>.gitignore</code> <span class="tag n">filtro</span>', "La lista di file da NON caricare mai.", "Ci tiene fuori segreti e roba locale."],
+                ['Org <code>al-consultant</code> <span class="tag n">proprietario</span>', "L&rsquo;account che possiede i repo, con i suoi membri.", "I repo stanno sotto l&rsquo;org, non sotto una persona."],
+            ]) + "\n" + h3("Strumenti che usiamo") + "\n" + table(["Strumento", "Ruolo", "Perche"], [
+                ["git (terminale)", "I comandi veri: clone, add, commit, push, pull.", "È come lavora Claude Code."],
+                ["GitHub Desktop", "App grafica: gli stessi comandi coi bottoni.", "Per chi non ama il terminale."],
+                ["github.com", "Il sito: vedi repo e storia, gestisci membri e permessi.", "Il pannello di controllo."],
+            ]) + "\n" + h3("Comandi di ogni giorno") + "\n" + table(["Comando", "Quando", "Cosa fa"], [
+                ["<code>git clone &lt;url&gt;</code>", "Una volta sola", "Scarica il repo sul tuo computer."],
+                ["<code>git pull</code>", "Prima di iniziare", "Scarica le ultime modifiche degli altri."],
+                ["<code>git add -A</code>", "Fatto un pezzo", "Prepara i file cambiati per il salvataggio."],
+                ["<code>git commit -m \"messaggio\"</code>", "Dopo add", "Salva un punto nella storia, col messaggio."],
+                ["<code>git push</code>", "Dopo commit", "Manda i tuoi salvataggi su GitHub."],
+            ]) + "\n" + h3("Il nostro caso: repo pubblico ma protetto") + "\n" + table(["Cosa", "Come"], [
+                ["<code>al-documentazione</code> è pubblico", "Il codice è visibile a tutti su github.com."],
+                ["I testi sensibili non si vedono", "<code>cifra.sh</code> li cifra con staticrypt: online va solo la versione cifrata, aperta con password."],
+                ["I sorgenti in chiaro restano fuori", "Vivono in <code>_sorgenti-*</code>, che <code>.gitignore</code> tiene fuori dal repo: sul pubblico non arrivano mai."],
+            ])),
+        3: ('      <p class="muted">Il giro di ogni giorno: dal tuo computer a GitHub. Il deploy del sito è un passo a parte, sul nostro server.</p>\n' +
+            flow([("01", "Pull", "Scarichi le ultime modifiche prima di iniziare.", "git pull", False),
+                  ("02", "Lavori", "Modifichi i file sul tuo computer, nell&rsquo;editor.", "editor", False),
+                  ("03", "Commit", "Salvi un punto con un messaggio chiaro.", "git commit", False),
+                  ("04", "Push", "Mandi i commit su GitHub, li vede anche l&rsquo;altro.", "git push", False),
+                  ("05", "Deploy", "Il sito va online sul nostro server (passo a parte).", "server", True)]) + "\n" +
+            note("<b>Regola chiave.</b> Si committa dritto su <code>main</code> perche siamo in due. Quando sarete di piu, si passa a un <b>branch</b> per persona e a una <b>Pull Request</b> per rivedere prima di unire.") + "\n" +
+            howto("clonare un repo e fare la prima modifica", "Per chi non l&rsquo;ha mai fatto: da zero fino alla prima modifica online su GitHub. I primi due passi si fanno una volta sola.", [
+                ("Installa git, una volta sola", "Su Mac di solito c&rsquo;è già (controlla con <code>git --version</code>). Su Windows scarica <b>Git for Windows</b>, oppure installa <b>GitHub Desktop</b> che se lo porta dietro."),
+                ("Fatti aggiungere all&rsquo;org", "Chiedi a Tomas di invitarti in <code>al-consultant</code> su github.com. Accetti l&rsquo;invito dalla mail. <span class=\"who\">a mano</span>"),
+                ("Clona il repo", "Sul repo, bottone verde <span class=\"path\">Code</span> &gt; copia l&rsquo;URL. In terminale: <code>git clone &lt;URL&gt;</code>. Con Desktop: <span class=\"path\">File &gt; Clone repository</span>. Ti crea la cartella in locale."),
+                ("Prima di lavorare, aggiorna", "Lancia <code>git pull</code>: prende le ultime modifiche degli altri, cosi non parti da una copia vecchia. <span class=\"who\">a mano</span>"),
+                ("Modifica e salva un punto", "Cambi i file, poi <code>git add -A</code> e <code>git commit -m \"cosa hai fatto\"</code>. Il messaggio serve a chi legge la storia dopo. <span class=\"who\">a mano</span>"),
+                ("Manda online su GitHub", "Lancia <code>git push</code>. Ora le tue modifiche sono su GitHub e le vede anche Tomas. Il sito online è un altro passo (deploy sul server). <span class=\"who\">a mano</span>"),
+            ]) + "\n" +
+            h3("Dove finiscono le cose") + "\n" + table(["Posto", "Contenuto"], [
+                ["github.com/al-consultant", "Tutti i repo dell&rsquo;org, i membri e i permessi."],
+                ["Repo in locale", "La tua copia di lavoro, dove modifichi i file."],
+                ["<code>.git/</code> (nascosta)", "La storia dei commit. Non si tocca a mano."],
+                ["<code>.gitignore</code>", "La lista di cosa non caricare (segreti, file locali)."],
+            ])),
+        4: (cards(
+                ("Collaboratore - primi passi", "Da zero a produttivo",
+                 ["Fatti invitare nell&rsquo;org <code>al-consultant</code> e accetta l&rsquo;invito.",
+                  "Installa git o GitHub Desktop, poi imposta nome e mail: <code>git config --global user.name</code> e <code>user.email</code>.",
+                  "<code>git clone &lt;URL&gt;</code> del repo su cui devi lavorare.",
+                  "Il giro: <code>git pull</code> &rarr; modifichi &rarr; <code>git add -A</code> &rarr; <code>git commit -m \"...\"</code> &rarr; <code>git push</code>."]),
+                ("Collaboratore - cosa deve saper fare", "Le competenze minime",
+                 "Sapere clone, pull, commit e push, col terminale o con GitHub Desktop. Nient&rsquo;altro: niente branch complicati finche lavoriamo su <code>main</code>.",
+                 "mai committare segreti (<code>.env</code>, token, credenziali, i file dentro <code>secrets/</code>). Controlla che siano in <code>.gitignore</code> PRIMA del primo commit.")) + "\n" +
+            pitch(["&laquo;GitHub è come un Google Drive per il codice, ma con la storia completa: ogni salvataggio resta, si può tornare indietro e più persone lavorano sugli stessi file senza pestarsi i piedi.&raquo;",
+                   "Il sito non è ospitato qui: GitHub tiene il codice, il sito va online sul nostro server."]) + "\n" +
+            warn(["<b>Mai segreti nel repo.</b> <code>.env</code>, token, chiavi, credenziali: sempre fuori, in <code>.gitignore</code>.",
+                  "<b><code>al-documentazione</code> è pubblico.</b> Chiunque legge il codice: per questo le pagine sensibili sono cifrate e i sorgenti in chiaro sono gitignorati.",
+                  "<b>Si committa su <code>main</code>.</b> Niente PR per ora: un commit sbagliato lo vedono tutti subito. Messaggi chiari e <code>git pull</code> prima di <code>git push</code>."])),
+        5: sec5([
+                ["Branch + PR", "Quando saremo di piu: un branch per persona e revisione prima di unire."],
+                ["Automazioni", "GitHub Actions per build e deploy automatici (ora il deploy è a mano)."],
+                ["Protezione main", "Regole sul ramo main quando arriveranno le Pull Request."],
+            ], [
+                ("Org", "al-consultant (2 membri)"),
+                ("Flusso", "Commit diretto su main"),
+                ("Hosting", "Server nostro (non GitHub Pages)"),
+                ("Pagine sensibili", "Cifrate, sorgenti gitignorati")]),
+    }))
+
 # ============================ SERVIZI AL CONSULTANT ============================
 # Dati RISERVATI: NON stanno qui (finirebbero sul repo pubblico in chiaro).
 # Vivono in _sorgenti-servizi/_dati-servizi.py, GITIGNORED, caricato solo se
@@ -617,6 +699,7 @@ CATS = [
         ("configuratore-vernici.html", "Configuratore Vernici", "Dal linguaggio naturale a un carrello di prodotti, col perche.", "demo"),
         ("siti-web-evolution.html", "Siti Web Evolution", "Landing per clienti da un motore di temi, mobile-first.", "in uso"),
         ("storytelling-altra-parte.html", "Storytelling - l'altra parte", "Sito e blog l'altra parte per AL, con build da script.", "in uso"),
+        ("come-usiamo-github.html", "Come usiamo GitHub", "Repo, collaborazione e gestione: come lavoriamo su GitHub, coi nostri repo.", "meta"),
     ], True),
     # Gli item servizi arrivano da _dati-servizi.py (gitignored). Se non c'e',
     # SERVIZI_ITEMS resta [] e la categoria appare "in preparazione".
