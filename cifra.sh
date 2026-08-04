@@ -41,6 +41,14 @@ if [ -z "$STATICRYPT_PASSWORD" ]; then
   echo "Password vuota: annullo, non cifro niente." >&2
   exit 1
 fi
+# Conferma: la ridigiti e deve combaciare. Cosi' un typo NON viene cifrato di
+# nascosto (staticrypt accetterebbe qualsiasi cosa senza dirti che e' sbagliata).
+read -rs -p "     Ripeti la password: " STATICRYPT_PASSWORD_CONFIRM; echo
+if [ "$STATICRYPT_PASSWORD" != "$STATICRYPT_PASSWORD_CONFIRM" ]; then
+  echo "Le due password non coincidono: annullo, non cifro niente." >&2
+  exit 1
+fi
+unset STATICRYPT_PASSWORD_CONFIRM
 export STATICRYPT_PASSWORD
 
 # Cifra tutti gli *.html di una cartella sorgente nella cartella pubblica.
