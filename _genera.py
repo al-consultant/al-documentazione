@@ -657,6 +657,221 @@ P.append(dict(
                 ("Pagine sensibili", "Cifrate, sorgenti gitignorati")]),
     }))
 
+# ---- FORM CON WEB3FORMS ----
+P.append(dict(
+    name="Form con Web3Forms", slug="form-web3forms", fonte="Fonte: web3forms.com",
+    h1="Form con<br>Web3Forms",
+    lede="Come mettiamo un form di contatto su un sito senza backend: Web3Forms riceve l’invio e ce lo gira via email. Niente database, niente server da mantenere - solo HTML e una access key.",
+    chips=[("Stato", "in uso"), ("Tipo", "form contatti"), ("Backend", "nessuno"), ("Invio", "via email")],
+    sec={
+        1: sec1(
+            ["<b>Cos’è.</b> Web3Forms è un servizio che riceve gli invii di un form HTML e li inoltra via email, senza scrivere un backend. Il form vive sul sito del cliente; le risposte arrivano nella casella che scegli.",
+             "<b>Il problema che risolve.</b> Un form di contatto ha bisogno di qualcosa che riceva i dati. Su un sito statico non ce l’hai. Web3Forms fa da ponte: il form fa POST a loro, loro ti mandano la mail.",
+             "<b>Perché è fatto così.</b> Zero backend da mantenere e zero costi per volumi bassi. La access key sta nell’HTML ed è pubblica, ma non fa danni: al massimo qualcuno manda un invio al tuo indirizzo, e l’honeypot filtra i bot."],
+            [("Tomas", "Mette un form funzionante su una landing in pochi minuti, senza tirare su un server."),
+             ("Collaboratore", "Copia il blocco form, cambia access key e campi, pubblica."),
+             ("Cliente", "Riceve i contatti dal sito direttamente nella sua casella mail.")]),
+        2: (table(["Concetto", "Cos’è", "Perché conta"], [
+                ['Access key <span class="tag">chiave</span>', "La chiave del tuo account Web3Forms, va nel campo hidden <code>access_key</code>.", "Dice dove mandare le mail."],
+                ['Endpoint <code>api.web3forms.com/submit</code> <span class="tag n">indirizzo</span>', "L’URL a cui il form fa POST.", "Fisso, uguale per tutti."],
+                ['Honeypot <code>botcheck</code> <span class="tag n">anti-spam</span>', "Campo nascosto che i bot compilano e gli umani no.", "Se è pieno, l’invio viene scartato."],
+                ['<code>redirect</code> <span class="tag n">grazie</span>', "Dopo l’invio porta a una pagina di ringraziamento.", "Dà conferma all’utente."],
+                ['Email di destinazione <span class="tag n">casella</span>', "Dove arrivano gli invii, si imposta sulla dashboard.", "È l’unico posto dove finiscono i dati."],
+            ]) + "\n" + h3("I campi che non si vedono (hidden)") + "\n" + table(["Campo", "A cosa serve"], [
+                ["<code>&lt;input type=\"hidden\" name=\"access_key\" value=\"...\"&gt;</code>", "La tua chiave. Obbligatorio."],
+                ["<code>&lt;input type=\"checkbox\" name=\"botcheck\" style=\"display:none\"&gt;</code>", "Honeypot anti-bot."],
+                ["<code>&lt;input type=\"hidden\" name=\"redirect\" value=\"https://.../grazie.html\"&gt;</code>", "Dove andare dopo l’invio."],
+                ["<code>&lt;input type=\"hidden\" name=\"subject\" value=\"Nuovo contatto dal sito\"&gt;</code>", "Oggetto della mail ricevuta."],
+            ])),
+        3: ('      <p class="muted">Dal visitatore che compila alla mail nella tua casella, tutto senza un server nostro.</p>\n' +
+            flow([("01", "Compila", "Il visitatore riempie nome, email e messaggio.", "form", False),
+                  ("02", "Invia", "Il browser fa POST a Web3Forms con la access key.", "POST", False),
+                  ("03", "Filtra", "Web3Forms controlla l’honeypot e scarta i bot.", "botcheck", False),
+                  ("04", "Email", "L’invio arriva nella casella impostata.", "email", False),
+                  ("05", "Grazie", "Il visitatore va alla pagina di ringraziamento.", "redirect", False)]) + "\n" +
+            note("<b>Regola chiave.</b> La access key è pubblica e va bene così: non dà accesso a niente, dice solo «manda a questo account». Il vero filtro anti-spam è l’honeypot <code>botcheck</code>.") + "\n" +
+            howto("mettere un form su un sito", "Per chi non l’ha mai fatto: dall’account Web3Forms al form che consegna le mail. L’unico passo da non saltare è la prova d’invio alla fine.", [
+                ("Crea l’account e prendi la key", "Vai su <code>web3forms.com</code>, inserisci l’email dove vuoi ricevere i contatti: ti danno una <b>access key</b>. È gratis per volumi normali."),
+                ("Incolla il blocco form", "Nella pagina metti <code>&lt;form action=\"https://api.web3forms.com/submit\" method=\"POST\"&gt;</code> con dentro il campo hidden <code>access_key</code>."),
+                ("Aggiungi i campi veri", "Nome, email, messaggio: <code>&lt;input&gt;</code> e <code>&lt;textarea&gt;</code> con l’attributo <code>name</code>, così finiscono nella mail."),
+                ("Metti l’honeypot", "Un campo <code>botcheck</code> nascosto (<code>display:none</code>): i bot lo compilano, quegli invii vengono scartati in automatico. <span class=\"who\">a mano</span>"),
+                ("Imposta il redirect", "Campo hidden <code>redirect</code> con l’URL di una pagina <span class=\"path\">grazie.html</span>: dopo l’invio l’utente ci finisce. <span class=\"who\">a mano</span>"),
+                ("Pubblica e prova", "Metti la pagina online sul dominio, compila il form tu stesso e <b>controlla che la mail arrivi</b>. <span class=\"who\">a mano</span>"),
+            ]) + "\n" +
+            h3("Dove finiscono le cose") + "\n" + table(["Posto", "Contenuto"], [
+                ["Il <code>&lt;form&gt;</code> nell’HTML", "Sulla pagina del sito."],
+                ["La access key", "Nel campo hidden, visibile nel sorgente (non è un segreto)."],
+                ["Gli invii", "Nella casella email impostata su Web3Forms."],
+                ["<code>grazie.html</code>", "Sul dominio, dove punta il redirect."],
+            ])),
+        4: (cards(
+                ("Collaboratore - primi passi", "Da zero a produttivo",
+                 ["Prendi la access key dell’account Web3Forms (chiedila a Tomas o creane uno per il cliente).",
+                  "Copia un blocco form già fatto da un altro sito nostro.",
+                  "Cambia access key, campi e redirect per il nuovo cliente.",
+                  "Pubblica e fai un invio di prova: controlla che la mail arrivi."]),
+                ("Collaboratore - cosa deve saper fare", "Le competenze minime",
+                 "HTML di base (form, input, textarea). Nessun backend, nessun database. Sapere qual è la casella mail che riceve.",
+                 "fai SEMPRE un invio di prova dopo la pubblicazione. Un form che sembra a posto ma non consegna la mail è il bug più comune e silenzioso.")) + "\n" +
+            pitch(["«Il modulo di contatto del tuo sito ti recapita i messaggi direttamente in email, senza costi di gestione e senza un server da mantenere. Il cliente compila, invia, e il messaggio ti arriva.»",
+                   "Niente dati salvati altrove: la richiesta arriva in casella e resta lì."]) + "\n" +
+            warn(["<b>La access key è pubblica:</b> sta nel codice della pagina. Non metterci vicino password o chiavi segrete.",
+                  "<b>Solo email:</b> Web3Forms non tiene un archivio degli invii. Se perdi la mail, l’hai persa.",
+                  "<b>Prova sempre l’invio dopo il deploy:</b> è l’errore più frequente, il form che non consegna.",
+                  "<b>Honeypot obbligatorio:</b> senza <code>botcheck</code> arriva spam dai bot."])),
+        5: sec5([
+                ["Storage invii", "Se serve un archivio: collegare Google Sheet o un webhook."],
+                ["Captcha", "Per form molto esposti, aggiungere hCaptcha."],
+                ["Template mail", "Personalizzare oggetto e corpo della mail ricevuta."],
+            ], [
+                ("Backend", "Nessuno"), ("Invio", "Via email"),
+                ("Anti-spam", "Honeypot botcheck"), ("Costo", "Gratis (volumi bassi)")]),
+    }))
+
+# ---- PROGETTI LARAVEL ----
+P.append(dict(
+    name="Progetti Laravel", slug="progetti-laravel", fonte="Fonte: repo Laravel al-consultant",
+    h1="Progetti<br>Laravel",
+    lede="Come si prende in mano un progetto Laravel: girarlo in locale da zero, capire dove sta cosa, e portarlo online sul server Plesk. Il framework PHP che usiamo per i lavori con un backend vero.",
+    chips=[("Stato", "in uso"), ("Tipo", "app PHP"), ("DB", "MySQL/MariaDB"), ("Deploy", "Plesk")],
+    sec={
+        1: sec1(
+            ["<b>Cos’è.</b> Laravel è il framework PHP con cui costruiamo i progetti che hanno bisogno di un backend vero: login, database, logica lato server. A differenza dei siti statici, qui c’è PHP che gira e un database MySQL dietro.",
+             "<b>Il problema che risolve.</b> Quando un lavoro non è una pagina ma un’applicazione (dati salvati, aree riservate, form che scrivono su DB), serve una struttura solida. Laravel la dà già pronta: routing, database, viste.",
+             "<b>Perché è fatto così.</b> Laravel è lo standard PHP: tanta documentazione, tanti pezzi già pronti. Gira sul nostro Plesk come qualsiasi sito PHP, col database MySQL creato dal pannello."],
+            [("Tomas", "Parte da un progetto Laravel già impostato invece di scrivere tutto da zero."),
+             ("Collaboratore", "Clona, lo fa girare in locale e lavora su una parte senza rompere il resto."),
+             ("Cliente", "Ottiene un’applicazione vera, non solo una vetrina.")]),
+        2: (table(["Concetto", "Cos’è", "Perché conta"], [
+                ['<code>routes/web.php</code> <span class="tag">mappa</span>', "L’elenco degli indirizzi del sito e cosa risponde a ognuno.", "È la mappa dell’app."],
+                ['Controller <span class="tag n">logica</span>', "In <code>app/Http/Controllers</code>: cosa succede quando visiti un indirizzo.", "Tiene il codice ordinato."],
+                ['Viste Blade <span class="tag n">grafica</span>', "In <code>resources/views</code>: i template HTML con i dati dentro.", "Separano grafica e logica."],
+                ['Migrations <span class="tag n">DB</span>', "In <code>database/migrations</code>: la struttura del database scritta in codice.", "Ricrei il DB con un comando."],
+                ['<code>.env</code> <span class="tag n">config</span>', "Configurazione: DB, chiavi, ambiente.", "Mai nel repo: cambia da locale a produzione."],
+                ['<code>composer.json</code> <span class="tag n">dipendenze</span>', "Le librerie PHP del progetto.", "<code>composer install</code> le installa tutte."],
+            ]) + "\n" + h3("Comandi artisan di ogni giorno") + "\n" + table(["Comando", "Quando", "Cosa fa"], [
+                ["<code>php artisan serve</code>", "Per lavorare in locale", "Gira l’app su <code>localhost:8000</code>."],
+                ["<code>php artisan migrate</code>", "Cambiata la struttura DB", "Crea/aggiorna le tabelle dalle migration."],
+                ["<code>php artisan key:generate</code>", "Appena clonato", "Genera la <code>APP_KEY</code> nel <code>.env</code>."],
+                ["<code>php artisan config:clear</code>", "Qualcosa non si aggiorna", "Pulisce la cache di configurazione."],
+                ["<code>php artisan tinker</code>", "Provare codice al volo", "Console interattiva sull’app."],
+            ])),
+        3: ('      <p class="muted">Setup locale: da repo clonato ad app che gira sul tuo computer.</p>\n' +
+            flow([("01", "Clona", "<code>git clone</code> del repo Laravel sul tuo computer.", "git clone", False),
+                  ("02", "Dipendenze", "<code>composer install</code> scarica le librerie PHP.", "composer", False),
+                  ("03", "Config", "Copi <code>.env.example</code> in <code>.env</code> e generi la key.", ".env", False),
+                  ("04", "Database", "Crei il DB locale e lanci <code>php artisan migrate</code>.", "migrate", False),
+                  ("05", "Gira", "<code>php artisan serve</code> e apri <code>localhost:8000</code>.", "serve", False)]) + "\n" +
+            note("<b>Regola chiave.</b> Il <code>.env</code> non sta MAI nel repo (ci sono password del DB e chiavi). Ogni ambiente - il tuo locale e il server - ha il suo <code>.env</code> diverso.") + "\n" +
+            howto("far girare un Laravel in locale", "Per chi non l’ha mai fatto: dai requisiti sul computer all’app che risponde su localhost. La cartella <code>vendor/</code> e il <code>.env</code> non arrivano dal repo: te li ricrei tu.", [
+                ("Requisiti sul tuo computer", "Ti servono <b>PHP</b>, <b>Composer</b> e un database <b>MySQL/MariaDB</b>. Controlla con <code>php -v</code> e <code>composer -V</code>."),
+                ("Clona il repo", "<code>git clone</code> dell’URL del progetto, poi entra nella cartella. <span class=\"who\">a mano</span>"),
+                ("Installa le dipendenze", "<code>composer install</code>: legge <code>composer.json</code> e scarica tutto in <code>vendor/</code> (cartella gitignorata). <span class=\"who sys\">lo fa composer</span>"),
+                ("Prepara il .env", "Copia <code>.env.example</code> in <code>.env</code>, poi <code>php artisan key:generate</code> per riempire <code>APP_KEY</code>. Nel <code>.env</code> metti i dati del tuo DB locale. <span class=\"who\">a mano</span>"),
+                ("Crea le tabelle", "Crea un database vuoto in locale, poi <code>php artisan migrate</code>: crea tutte le tabelle dalle migration. <span class=\"who sys\">lo fa artisan</span>"),
+                ("Avvia", "<code>php artisan serve</code> e vai su <span class=\"path\">localhost:8000</span>. L’app gira sul tuo computer. <span class=\"who sys\">lo fa artisan</span>"),
+            ]) + "\n" +
+            h3("Dove finiscono le cose") + "\n" + table(["Cartella / file", "Contenuto"], [
+                ["<code>app/</code>", "La logica: Controller, Model."],
+                ["<code>routes/</code>", "Gli indirizzi del sito (<code>web.php</code>)."],
+                ["<code>resources/views/</code>", "I template Blade."],
+                ["<code>database/migrations/</code>", "La struttura del DB in codice."],
+                ["<code>public/</code>", "Il punto d’ingresso (<code>index.php</code>): è qui che punta il server."],
+                ["<code>.env</code> &middot; <code>vendor/</code>", "Config locale e dipendenze: gitignorati, si rifanno a mano."],
+            ])),
+        4: (cards(
+                ("Collaboratore - primi passi", "Da zero a produttivo",
+                 ["Installa PHP, Composer e MySQL sul tuo computer.",
+                  "<code>git clone</code> del repo, poi <code>composer install</code>.",
+                  "Copia <code>.env.example</code> in <code>.env</code>, <code>php artisan key:generate</code>, metti i dati del DB locale.",
+                  "<code>php artisan migrate</code>, poi <code>php artisan serve</code> &rarr; <code>localhost:8000</code>."]),
+                ("Collaboratore - cosa deve saper fare", "Le competenze minime",
+                 "PHP di base e i concetti MVC (route &rarr; controller &rarr; vista). Saper usare Composer e artisan da terminale. Il resto lo dà il framework.",
+                 "mai committare il <code>.env</code> né la cartella <code>vendor/</code>. Laravel li mette già in <code>.gitignore</code>: controlla prima del primo push.")) + "\n" +
+            pitch(["«Il tuo progetto è un’applicazione vera, non solo un sito da guardare: gestisce dati, utenti e logica su misura. Costruita su Laravel, lo standard PHP più diffuso e mantenuto.»",
+                   "Il database e la configurazione stanno sul server, al sicuro, mai nel codice pubblico."]) + "\n" +
+            warn(["<b>Mai il <code>.env</code> nel repo:</b> contiene password del DB e la <code>APP_KEY</code>. Sempre gitignorato.",
+                  "<b>Document root su <code>/public</code>:</b> il server deve puntare lì, non alla radice del progetto (vedi dossier Plesk).",
+                  "<b><code>composer install</code> dopo ogni pull:</b> se cambiano le dipendenze, vanno reinstallate.",
+                  "<b>Migrate con cautela in produzione:</b> serve <code>--force</code> perché è ambiente live; una migration sbagliata tocca dati veri."])),
+        5: sec5([
+                ["Deploy automatico", "<code>composer</code> + <code>migrate</code> a ogni pull (vedi Plesk, deployment actions)."],
+                ["Code in background", "Queue per lavori lunghi: email, elaborazioni."],
+                ["Staging", "Un dominio di prova prima della produzione."],
+            ], [
+                ("Framework", "Laravel (PHP)"), ("DB", "MySQL/MariaDB (Plesk)"),
+                ("Deploy", "Plesk + Git, root su /public"), ("Config", ".env per ambiente")]),
+    }))
+
+# ---- NUOVO DOMINIO SU PLESK ----
+P.append(dict(
+    name="Nuovo dominio su Plesk", slug="dominio-plesk", fonte="Fonte: pannello Plesk al-consultant",
+    h1="Nuovo dominio<br>su Plesk",
+    lede="Da zero a sito online: aggiungere un dominio su Plesk, puntarlo al server dai record DNS del provider, collegare il repository GitHub e aggiornarlo col pull. Il percorso completo per mettere un progetto in produzione.",
+    chips=[("Stato", "in uso"), ("Tipo", "deploy/hosting"), ("Pannello", "Plesk"), ("Deploy", "Git + pull")],
+    sec={
+        1: sec1(
+            ["<b>Cos’è.</b> Plesk è il pannello con cui gestiamo il server: da qui si aggiunge un dominio, si collega il codice da GitHub e si manda il sito online. È il posto dove i progetti diventano davvero visibili sul web.",
+             "<b>Il problema che risolve.</b> GitHub tiene il codice, ma non è l’hosting (vedi «Come usiamo GitHub»). Per far vedere un sito serve un server: Plesk è la nostra interfaccia per configurarlo senza vivere da riga di comando.",
+             "<b>Perché è fatto così.</b> Plesk fa da UI a tutto: dominio, certificato HTTPS, database e il pull da GitHub con un bottone. Il DNS invece si tocca dal provider del dominio, per dire al mondo «questo dominio sta su questo server»."],
+            [("Tomas", "Mette online un progetto nuovo seguendo sempre gli stessi passi."),
+             ("Collaboratore", "Capisce come un repo diventa un sito, e come aggiornarlo dopo un push."),
+             ("Cliente", "Ottiene il suo dominio online, col sito servito dal nostro server.")]),
+        2: (table(["Concetto", "Cos’è", "Perché conta"], [
+                ['Dominio (in Plesk) <span class="tag">sito</span>', "Il sito aggiunto al pannello, con la sua cartella e config.", "Un dominio = un sito servito."],
+                ['Record DNS (dal provider) <span class="tag n">indirizzamento</span>', "Le regole che dicono «questo dominio &rarr; questo server».", "Senza, il dominio non trova il server."],
+                ['Record A <span class="tag n">IP</span>', "Punta il dominio all’IP del server.", "È il collegamento base."],
+                ['Estensione Git di Plesk <span class="tag n">codice</span>', "Collega un repo GitHub alla cartella del dominio.", "Porta il codice sul server."],
+                ['Pull Updates <span class="tag n">deploy</span>', "Il bottone che aggiorna il sito con gli ultimi commit.", "È il deploy vero e proprio."],
+                ['Document root <span class="tag n">cartella</span>', "La cartella che il server mostra come sito.", "Per Laravel va su <code>/public</code>."],
+            ]) + "\n" + note("<b>Da confermare col boss.</b> Il provider dove sono registrati i domini e l’IP/tipo del server li gestisce lui: questi due dettagli vanno riempiti qui una volta avuti. Il resto del flusso è quello che facciamo noi.")),
+        3: ('      <p class="muted">Da zero a online: dominio, DNS, repo GitHub, primo deploy. Il DNS è l’unico passo fuori da Plesk.</p>\n' +
+            flow([("01", "Aggiungi dominio", "In Plesk crei il dominio col suo spazio.", "Plesk", False),
+                  ("02", "Punta il DNS", "Dal provider metti il record A verso l’IP del server.", "DNS", False),
+                  ("03", "Collega GitHub", "Estensione Git: incolli l’URL del repo, Plesk clona.", "Git", False),
+                  ("04", "Configura", "Document root su <code>/public</code>, PHP, <code>.env</code>, deployment actions.", "config", False),
+                  ("05", "Pull", "Premi «Pull Updates»: gli ultimi commit vanno online.", "pull", True)]) + "\n" +
+            note("<b>Regola chiave.</b> Il DNS ci mette da minuti a qualche ora a propagarsi: dopo aver messo il record A, il dominio non risponde subito ovunque. È normale, aspetta.") + "\n" +
+            howto("mettere un dominio online da zero", "Per chi non l’ha mai fatto: dal dominio vuoto al sito servito dal nostro server. Un solo passo è fuori da Plesk (il DNS, dal provider) ed è quello che dipende dal boss.", [
+                ("Aggiungi il dominio in Plesk", "Nel pannello, <span class=\"path\">Aggiungi dominio</span>: scrivi il nome (es. <code>cliente.it</code>) e Plesk crea lo spazio con la sua cartella. <span class=\"who\">a mano</span>"),
+                ("Punta il dominio al server (DNS)", "Dal provider dove è registrato il dominio, nei record DNS aggiungi un <b>record A</b> verso l’IP del nostro server. <b>Provider e IP li gestisce il boss:</b> fatti dare l’IP e dove sono i domini prima di toccare i record. <span class=\"who\">col boss</span>"),
+                ("Aspetta la propagazione", "Il DNS non è istantaneo: da pochi minuti a qualche ora. Controlla che il dominio inizi a rispondere."),
+                ("Collega il repository GitHub", "In Plesk apri <span class=\"path\">Git</span>, incolla l’URL del repo e scegli il branch <code>main</code>: Plesk clona il codice nella cartella del dominio. Per un repo privato aggiungi la deploy key di Plesk tra le chiavi del repo su GitHub. <span class=\"who sys\">lo fa Plesk</span>"),
+                ("Configura il sito", "Se è Laravel: sposta il document root su <code>/public</code> (Hosting Settings), scegli la versione PHP, crea il DB MySQL dal pannello e compila il <code>.env</code> sul server. Nelle <span class=\"path\">deployment actions</span> metti <code>composer install &amp;&amp; php artisan migrate --force</code>. <span class=\"who\">a mano</span>"),
+                ("Fai il primo deploy", "Premi <span class=\"path\">Pull Updates</span>: Plesk scarica gli ultimi commit e lancia le deployment actions. Il sito è online. <span class=\"who sys\">lo fa Plesk</span>"),
+                ("Condividi il repo coi partner", "Su GitHub aggiungi i partner come collaboratori del repo/org: così possono pushare, e il prossimo pull su Plesk porterà anche le loro modifiche. <span class=\"who\">a mano</span>"),
+            ]) + "\n" +
+            h3("Dove finiscono le cose") + "\n" + table(["Posto", "Contenuto"], [
+                ["Plesk (pannello)", "Dominio, PHP, DB, Git, certificato HTTPS."],
+                ["Provider del dominio", "I record DNS (record A verso il server)."],
+                ["Cartella del dominio sul server", "Il codice clonato da GitHub."],
+                ["<code>/public</code> (Laravel)", "Il document root che il server mostra."],
+                ["GitHub", "Il repo, condiviso coi partner come collaboratori."],
+            ])),
+        4: (cards(
+                ("Collaboratore - primi passi", "Da zero a produttivo",
+                 ["Fatti dare l’accesso a Plesk e l’IP del server (da Tomas o dal boss).",
+                  "Dominio nuovo: <code>Aggiungi dominio</code> in Plesk, poi record A dal provider.",
+                  "Collega il repo con l’estensione Git, imposta document root su <code>/public</code>.",
+                  "Dopo ogni push su GitHub, entra in Plesk e premi <code>Pull Updates</code>."]),
+                ("Collaboratore - cosa deve saper fare", "Le competenze minime",
+                 "Muoversi nel pannello Plesk, capire cos’è un record DNS A, e il giro Git (push da una parte, pull dall’altra). Per Laravel: document root su <code>/public</code> e deployment actions.",
+                 "il DNS e il tipo di server li gestisce il boss: prima di toccare i record, allineati con lui. Un record DNS sbagliato butta giù il dominio.")) + "\n" +
+            pitch(["«Il tuo sito va online sul nostro server col tuo dominio. Lo aggiorniamo con un clic ogni volta che c’è una modifica, tirandola direttamente dal codice condiviso.»",
+                   "Il dominio punta al nostro server; il codice arriva da GitHub, dove tu e i partner lavorate insieme."]) + "\n" +
+            warn(["<b>DNS e server li gestisce il boss:</b> da confermare quale provider e l’IP esatto. Non toccare i record a caso.",
+                  "<b>Il pull è manuale:</b> dopo un push il sito NON si aggiorna da solo. Devi premere «Pull Updates» in Plesk.",
+                  "<b>Document root su <code>/public</code> per Laravel:</b> se punta alla radice, il sito espone i file e non parte.",
+                  "<b>Il <code>.env</code> sta sul server,</b> non nel repo: va compilato in Plesk con i dati di produzione."])),
+        5: sec5([
+                ["Deploy automatico", "Webhook GitHub &rarr; pull automatico a ogni push (ora è manuale)."],
+                ["HTTPS", "Certificato Let’s Encrypt dal pannello per ogni dominio."],
+                ["Infrastruttura", "Confermare col boss provider DNS e IP del server, e documentarli qui."],
+            ], [
+                ("Pannello", "Plesk"), ("DNS", "Dal provider (record A) - da confermare"),
+                ("Deploy", "Git + Pull Updates (manuale)"), ("Partner", "Collaboratori sul repo GitHub")]),
+    }))
+
 # ============================ SERVIZI AL CONSULTANT ============================
 # Dati RISERVATI: NON stanno qui (finirebbero sul repo pubblico in chiaro).
 # Vivono in _sorgenti-servizi/_dati-servizi.py, GITIGNORED, caricato solo se
@@ -700,6 +915,9 @@ CATS = [
         ("siti-web-evolution.html", "Siti Web Evolution", "Landing per clienti da un motore di temi, mobile-first.", "in uso"),
         ("storytelling-altra-parte.html", "Storytelling - l'altra parte", "Sito e blog l'altra parte per AL, con build da script.", "in uso"),
         ("come-usiamo-github.html", "Come usiamo GitHub", "Repo, collaborazione e gestione: come lavoriamo su GitHub, coi nostri repo.", "meta"),
+        ("form-web3forms.html", "Form con Web3Forms", "Form di contatto senza backend: Web3Forms gira gli invii via email.", "in uso"),
+        ("progetti-laravel.html", "Progetti Laravel", "App PHP con backend: setup locale, struttura e deploy su Plesk.", "in uso"),
+        ("dominio-plesk.html", "Nuovo dominio su Plesk", "Da zero a online: dominio, DNS, repo GitHub e pull su Plesk.", "in uso"),
     ], True),
     # Gli item servizi arrivano da _dati-servizi.py (gitignored). Se non c'e',
     # SERVIZI_ITEMS resta [] e la categoria appare "in preparazione".
